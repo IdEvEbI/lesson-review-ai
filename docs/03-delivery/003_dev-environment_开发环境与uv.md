@@ -55,18 +55,22 @@ uv python install 3.12    # 若本机尚无 uv 管理的 3.12
 uv python pin 3.12        # 已有 .python-version 时可省略或重跑
 ```
 
-后续实现阶段（M1）会增加 `pyproject.toml`；日常用：
+后续实现阶段日常用：
 
 ```bash
-uv sync                   # 按锁文件安装依赖（M1 后）
+uv sync                   # 按锁文件安装依赖
 uv run lesson-review --help
+uv run lesson-review check
+uv run lesson-review run <媒体文件> --dry-run
 ```
 
-在 M1 落地前，可用下面确认 uv 能选到 3.12：
+确认解释器：
 
 ```bash
 uv run python --version   # 期望输出 Python 3.12.x
 ```
+
+说明：`uv python install 3.12` 会再下一份独立解释器；若下载较慢，可直接让 uv 使用 Homebrew 的 `python3.12`（本仓已验证可行）。
 
 ---
 
@@ -75,14 +79,14 @@ uv run python --version   # 期望输出 Python 3.12.x
 | 依赖             | 安装                                | 用途               |
 | ---------------- | ----------------------------------- | ------------------ |
 | ffmpeg           | `brew install ffmpeg`               | 视频抽轨           |
-| mlx-whisper      | M1 起由 `pyproject` / `uv add` 引入 | 本地 ASR           |
+| mlx-whisper      | 后续 ASR 切片由 `uv add` 引入       | 本地 ASR           |
 | DeepSeek API Key | 复制 `.env.example` → `.env` 后填写 | 纠错 / 结构 / 建议 |
 
-**当前缺口**：本机尚未检测到 `ffmpeg`。进入媒体相关 Issue 前请先安装并确认：
+`ffmpeg` 安装后自检：
 
 ```bash
-brew install ffmpeg
 ffmpeg -version
+uv run lesson-review check   # 应显示 ffmpeg OK
 ```
 
 ---
@@ -103,16 +107,17 @@ npm run lint:md
 
 ## 6. 与里程碑的关系
 
-| 里程碑          | 环境相关交付                                     |
-| --------------- | ------------------------------------------------ |
-| M0              | 文档 + Markdown lint（已合入）                   |
-| **M0b（本文）** | uv / Python 3.12 说明与版本钉死；ffmpeg 安装指引 |
-| M1              | `pyproject.toml`、CLI 骨架、`--dry-run` 依赖检查 |
+| 里程碑          | 环境相关交付                                                |
+| --------------- | ----------------------------------------------------------- |
+| M0              | 文档 + Markdown lint（已合入）                              |
+| **M0b（本文）** | uv / Python 3.12 说明与版本钉死；ffmpeg 安装指引            |
+| M1              | `pyproject.toml`、CLI 骨架、`--dry-run` / `check`（进行中） |
 
 ---
 
 ## 7. 修订记录
 
-| 版本 | 日期       | 说明         |
-| ---- | ---------- | ------------ |
-| v0.1 | 2026-07-24 | 首版环境说明 |
+| 版本 | 日期       | 说明                                            |
+| ---- | ---------- | ----------------------------------------------- |
+| v0.1 | 2026-07-24 | 首版环境说明                                    |
+| v0.2 | 2026-07-24 | ffmpeg 已可用；补充 `uv run lesson-review` 命令 |

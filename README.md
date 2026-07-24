@@ -59,7 +59,15 @@ npm run lint:md     # Markdownlint 检查
 | 编排               | 先 CLI / 脚本；跑通后再加简易界面              |
 | 产物               | `output/` 下 Markdown 报告；不提交真实课例媒体 |
 
-Python 包与 CLI 在 **M1** 落地；当前请先按 [开发环境与 uv](./docs/03-delivery/003_dev-environment_开发环境与uv.md) 配好 3.12 与 uv。
+Python 包与 CLI 在 **M1** 落地。环境配好后：
+
+```bash
+uv sync
+uv run lesson-review --help
+uv run lesson-review check
+```
+
+详见 [开发环境与 uv](./docs/03-delivery/003_dev-environment_开发环境与uv.md)。
 
 ---
 

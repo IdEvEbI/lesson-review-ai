@@ -31,6 +31,8 @@
 
 **默认技术栈**：Python CLI（uv）· 本地 mlx-whisper · DeepSeek API（见 [技术选型](./docs/02-architecture/002_tech-stack_技术选型摘要.md)）
 
+**开发环境**：见 [开发环境与 uv](./docs/03-delivery/003_dev-environment_开发环境与uv.md)（`python3` 可能仍是系统 3.9；项目用 `python3.12` / `uv`）。
+
 ---
 
 ## 3. Markdown 工具链
@@ -51,13 +53,13 @@ npm run lint:md     # Markdownlint 检查
 
 | 步骤               | 建议方向（非锁死）                             |
 | ------------------ | ---------------------------------------------- |
-| 音视频             | `ffmpeg` 抽音轨                                |
+| 音视频             | `ffmpeg` 抽音轨（`brew install ffmpeg`）       |
 | 转写               | 本地 **mlx-whisper**（large-v3-turbo）         |
 | 纠错 / 结构 / 建议 | **DeepSeek API** + 版本化提示词（`prompts/`）  |
 | 编排               | 先 CLI / 脚本；跑通后再加简易界面              |
 | 产物               | `output/` 下 Markdown 报告；不提交真实课例媒体 |
 
-具体目录与依赖在首个可运行里程碑中落地；当前以文档与工具链对齐为主。
+Python 包与 CLI 在 **M1** 落地；当前请先按 [开发环境与 uv](./docs/03-delivery/003_dev-environment_开发环境与uv.md) 配好 3.12 与 uv。
 
 ---
 

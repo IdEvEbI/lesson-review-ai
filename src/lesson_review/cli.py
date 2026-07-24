@@ -16,6 +16,12 @@ from lesson_review.checks import (
     run_dependency_checks,
 )
 from lesson_review.config import load_env
+from lesson_review.media import (
+    DEFAULT_AUDIO_FORMAT,
+    SUPPORTED_AUDIO_FORMATS,
+    ExtractAudioError,
+    extract_audio,
+)
 
 app = typer.Typer(
     name="lesson-review",
@@ -120,6 +126,37 @@ def check_cmd() -> None:
     _print_checks(checks)
     if any(c.required and not c.ok for c in checks):
         raise typer.Exit(code=EXIT_DEPS)
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("extract-audio")
+def extract_audio_cmd(
+    path: Path = typer.Argument(..., exists=False, help="Video (or audio) file path"),
+    output: Path | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output audio path (default: output/<stem>/audio/<stem>.<format>)",
+    ),
+    fmt: str = typer.Option(
+        DEFAULT_AUDIO_FORMAT,
+        "--format",
+        help=f"Audio format: {', '.join(SUPPORTED_AUDIO_FORMATS)} (default: mp3)",
+    ),
+    output_dir: Path = typer.Option(
+        Path("output"),
+        "--output-dir",
+        help="Root used when -o is omitted",
+    ),
+) -> None:
+    """Extract mono audio from a media file via ffmpeg (no LLM)."""
+    try:
+        dest = extract_audio(path, output, fmt, output_root=output_dir)
+    except ExtractAudioError as exc:
+        typer.echo(f"extract-audio failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+
+    typer.echo(str(dest))
     raise typer.Exit(code=EXIT_OK)
 
 

@@ -60,12 +60,15 @@ uv run python -c "import sys; print(sys.executable)"
 
 ## 4. 坏了怎么想
 
-| 现象                               | 先查                                                      |
-| ---------------------------------- | --------------------------------------------------------- |
-| `python3` 仍是 3.9                 | 正常；看 `python3.12` 与 `uv run python`                  |
-| `lesson-review: command not found` | 用 `uv run lesson-review`，或先 `uv sync`                 |
-| 依赖版本和别人不一致               | 是否提交/拉取了最新 `uv.lock`？是否绕过 uv 用了全局 pip？ |
-| `uv python install` 一直转圈       | 网络/代理；可改用 brew 3.12，仓库配置不用改               |
+| 现象                               | 先查                                                           |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `python3` 仍是 3.9                 | 正常；看 `python3.12` 与 `uv run python`                       |
+| `lesson-review: command not found` | 用 `uv run lesson-review`，或先 `uv sync`                      |
+| 依赖版本和别人不一致               | 是否提交/拉取了最新 `uv.lock`？是否绕过 uv 用了全局 pip？      |
+| `uv python install` 一直转圈       | 网络/代理；可改用 brew 3.12，仓库配置不用改                    |
+| 已装上 uv 管理的 3.12              | 可与 brew 的 3.12 并存；继续 `uv run` 即可，**不必改仓库配置** |
+
+换网线后本机已成功执行 `uv python install 3.12`（约数十秒，得到 `cpython-3.12.13`）。与 Homebrew 的 3.12 并存不冲突。
 
 ---
 

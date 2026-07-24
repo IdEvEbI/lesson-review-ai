@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.2
+- **版本**：v0.3
 - **日期**：2026-07-24
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -50,19 +50,24 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 
 ```bash
 lesson-review extract-audio <视频> [-o <音频>] [--format mp3|wav] [--output-dir ./output]
-lesson-review transcribe <音频> -o <transcript.json>
+lesson-review transcribe <音频> [-o <transcript.json>] [--language zh] [--whisper-model <id>] [--output-dir ./output]
 lesson-review correct <transcript> -o <corrected.md>
 lesson-review analyze <corrected> --mode single|module ...
 ```
 
-| 子命令 / 选项     | 说明                                                               |
-| ----------------- | ------------------------------------------------------------------ |
-| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                    |
-| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM  |
-| `-o` / `--output` | 显式输出路径；省略时为 `<output-dir>/<stem>/audio/<stem>.<format>` |
-| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                          |
+| 子命令 / 选项     | 说明                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                     |
+| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM   |
+| `-o` / `--output` | 显式输出路径；省略时按子命令默认布局                                |
+| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                           |
+| `transcribe`      | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）   |
+| `--language`      | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                |
+| `--whisper-model` | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo` |
 
-子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` 不要求 `LLM_API_KEY`。
+子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` / `transcribe` 不要求 `LLM_API_KEY`。`transcribe` 需要可导入的 `mlx-whisper` 与 PATH 上的 `ffmpeg`。
+
+`transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。
 
 ---
 
@@ -123,7 +128,8 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 
 ## 7. 修订记录
 
-| 版本 | 日期       | 说明                                                |
-| ---- | ---------- | --------------------------------------------------- |
-| v0.1 | 2026-07-23 | 首版契约                                            |
-| v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径 |
+| 版本 | 日期       | 说明                                                            |
+| ---- | ---------- | --------------------------------------------------------------- |
+| v0.1 | 2026-07-23 | 首版契约                                                        |
+| v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径             |
+| v0.3 | 2026-07-24 | `transcribe`：mlx-whisper、`transcript_raw.json`、模型/语言参数 |

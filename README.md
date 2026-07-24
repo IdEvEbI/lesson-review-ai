@@ -26,7 +26,7 @@
 1. [产品 PRD](./docs/01-product/001_prd_课评教练MVP产品说明.md)（范围、用户、验收）
 2. [上游标准引用](./docs/02-architecture/003_upstream-standards_上游标准引用.md)
 3. [架构概览](./docs/02-architecture/001_system-overview_系统概览.md) · [Issue 地图](./docs/03-delivery/001_issue-map_竖切与Issue清单.md) · [DevOps 工作流](./docs/03-delivery/002_devops-workflow_分支PR与门禁.md)
-4. 文档总入口：[docs/README.md](./docs/README.md)
+4. 文档总入口：[docs/README.md](./docs/README.md) · 工具短文：[90-guides](./docs/90-guides/README.md)
 5. Cursor Rule：`.cursor/rules/lesson-review-ai.mdc`
 
 **默认技术栈**：Python CLI（uv）· 本地 mlx-whisper · DeepSeek API（见 [技术选型](./docs/02-architecture/002_tech-stack_技术选型摘要.md)）

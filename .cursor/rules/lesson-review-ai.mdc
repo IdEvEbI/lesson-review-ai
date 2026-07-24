@@ -41,6 +41,7 @@ alwaysApply: true
 ## 协作
 
 - 改评价行为前：先读 `docs/01-product` 中的 PRD，再按「上游标准引用」打开上游对应 Markdown，最后改 `prompts/`。
+- 不熟悉 uv / ffmpeg / 本地 CLI 时，可读 `docs/90-guides/`（学习区，非产品真相源）。
 - 交付按**里程碑分支 / 多次提交 / 一个 PR**推进；Issue 可细拆，但不强制「一 Issue 一 PR」。
 - 维护者确认前不擅自 commit / push / 合入；确认后的授权语按其当场约定执行。
 - 文档分类对齐后再分批提交；给方案时附下一步；不把本仓扩成第二个标准文档仓。

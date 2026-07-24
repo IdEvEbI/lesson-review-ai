@@ -24,7 +24,7 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 
 → [03-delivery/README.md](./03-delivery/README.md)
 
-含 Issue 地图与协作 / 分支 / PR 约定。
+含 Issue 地图、DevOps 约定与 [开发环境与 uv](./03-delivery/003_dev-environment_开发环境与uv.md)。
 
 ---
 

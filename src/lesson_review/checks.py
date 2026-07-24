@@ -41,8 +41,8 @@ def check_mlx_whisper() -> CheckItem:
     return CheckItem(
         "mlx-whisper",
         False,
-        "not installed (will be added in ASR slice)",
-        required=False,
+        "not installed (uv sync)",
+        required=True,
     )
 
 

@@ -58,21 +58,30 @@ uv sync
 # 无 error 即可；环境已同步时可能很快结束
 
 uv run lesson-review --help
-# 应列出子命令：version / run / check
+# 应列出子命令：version / run / check / extract-audio / transcribe
 
 uv run lesson-review check
 # [OK] ffmpeg (required): /opt/homebrew/bin/ffmpeg
-# [MISSING] mlx-whisper (optional): ...
+# [OK] mlx-whisper (required): importable
 # [MISSING] LLM_API_KEY (optional): ...
 # 在 required 项均 OK 时，退出码为 0
 ```
 
-对本地音频执行 dry-run（路径请替换为实际文件）：
+抽轨与转写（路径请替换为实际文件；转写首次会下载模型）：
+
+```bash
+uv run lesson-review extract-audio data/input/sample.avi
+uv run lesson-review transcribe output/sample/audio/sample.mp3
+# 写出 output/sample/transcript_raw.json
+```
+
+对本地音频执行 dry-run：
 
 ```bash
 uv run lesson-review run /tmp/demo.wav --dry-run
 # [OK] input ...
 # [OK] ffmpeg ...
+# [OK] mlx-whisper ...
 # Dry-run OK for required deps. Optional not ready: ...
 # 退出码 0
 ```
@@ -96,7 +105,7 @@ uv run lesson-review run /tmp/no-such.wav --dry-run
 | 2      | 依赖缺失       | 先安装 required 依赖（例如 ffmpeg） |
 | 3      | 流水线步骤失败 | 多见于转写或 LLM 调用（后续切片）   |
 
-输出中的 `required` 与 `optional` 含义不同：骨架阶段允许 optional 项为 MISSING 且退出码仍为 `0`，不表示全部检查项必须为 OK 才能继续开发。
+输出中的 `required` 与 `optional` 含义不同：当前 `ffmpeg` 与 `mlx-whisper` 为 required；`LLM_API_KEY` 在接入纠错/建议前可为 optional。
 
 ---
 

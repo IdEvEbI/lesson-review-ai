@@ -8,6 +8,12 @@ from typing import Optional
 import typer
 
 from lesson_review import __version__
+from lesson_review.asr import (
+    TranscribeError,
+    resolve_whisper_language,
+    resolve_whisper_model,
+    transcribe_audio,
+)
 from lesson_review.checks import (
     EXIT_DEPS,
     EXIT_OK,
@@ -154,6 +160,50 @@ def extract_audio_cmd(
         dest = extract_audio(path, output, fmt, output_root=output_dir)
     except ExtractAudioError as exc:
         typer.echo(f"extract-audio failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+
+    typer.echo(str(dest))
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("transcribe")
+def transcribe_cmd(
+    path: Path = typer.Argument(..., exists=False, help="Audio file path"),
+    output: Path | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output JSON path (default: output/<stem>/transcript_raw.json)",
+    ),
+    language: Optional[str] = typer.Option(
+        None,
+        "--language",
+        help="ASR language hint (default: WHISPER_LANGUAGE or zh)",
+    ),
+    whisper_model: Optional[str] = typer.Option(
+        None,
+        "--whisper-model",
+        help="mlx-whisper model id (default: WHISPER_MODEL or large-v3-turbo)",
+    ),
+    output_dir: Path = typer.Option(
+        Path("output"),
+        "--output-dir",
+        help="Root used when -o is omitted",
+    ),
+) -> None:
+    """Transcribe audio with local mlx-whisper (no LLM)."""
+    model = resolve_whisper_model(whisper_model)
+    lang = resolve_whisper_language(language)
+    try:
+        dest = transcribe_audio(
+            path,
+            output,
+            language=lang,
+            whisper_model=model,
+            output_root=output_dir,
+        )
+    except TranscribeError as exc:
+        typer.echo(f"transcribe failed: {exc}", err=True)
         raise typer.Exit(code=exc.exit_code) from exc
 
     typer.echo(str(dest))

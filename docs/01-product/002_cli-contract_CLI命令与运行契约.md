@@ -1,8 +1,8 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.1
-- **日期**：2026-07-23
-- **状态**：目标契约（实现前约定；首个 CLI Issue 按本文落地，偏差须更新本文）
+- **版本**：v0.2
+- **日期**：2026-07-24
+- **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
 ---
 
@@ -49,13 +49,20 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 ### 2.3 分步子命令（调试，M1 起逐步提供）
 
 ```bash
-lesson-review extract-audio <视频> -o <音频>
+lesson-review extract-audio <视频> [-o <音频>] [--format mp3|wav] [--output-dir ./output]
 lesson-review transcribe <音频> -o <transcript.json>
 lesson-review correct <transcript> -o <corrected.md>
 lesson-review analyze <corrected> --mode single|module ...
 ```
 
-子命令与 `run` 共用同一套配置与 manifest 字段定义。
+| 子命令 / 选项     | 说明                                                               |
+| ----------------- | ------------------------------------------------------------------ |
+| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                    |
+| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM  |
+| `-o` / `--output` | 显式输出路径；省略时为 `<output-dir>/<stem>/audio/<stem>.<format>` |
+| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                          |
+
+子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` 不要求 `LLM_API_KEY`。
 
 ---
 
@@ -116,6 +123,7 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 
 ## 7. 修订记录
 
-| 版本 | 日期       | 说明     |
-| ---- | ---------- | -------- |
-| v0.1 | 2026-07-23 | 首版契约 |
+| 版本 | 日期       | 说明                                                |
+| ---- | ---------- | --------------------------------------------------- |
+| v0.1 | 2026-07-23 | 首版契约                                            |
+| v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径 |

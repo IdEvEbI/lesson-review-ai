@@ -77,7 +77,16 @@ ffmpeg -i ~/Desktop/sample.mp4 -vn -ac 1 -ar 16000 ~/Desktop/sample.wav
 
 **预期结果**：生成可播放的 `m4a` 或 `wav` 文件。
 
-说明：产品路径中的抽轨将在后续 media 切片中由 CLI 封装；本节命令仅用于建立直观认识。
+产品路径已提供 CLI 封装（默认 mp3）：
+
+```bash
+uv run lesson-review extract-audio data/input/sample.avi
+# 默认写出 output/<stem>/audio/<stem>.mp3
+
+uv run lesson-review extract-audio data/input/sample.avi --format wav -o /tmp/sample.wav
+```
+
+本节手工命令仍可用于学习与排障。
 
 ### 4.3 与 CLI dry-run 的关系
 

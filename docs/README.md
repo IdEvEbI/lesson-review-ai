@@ -28,9 +28,18 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 
 ---
 
+## 4. 学习与排障（非产品源）
+
+→ [90-guides/README.md](./90-guides/README.md)
+
+uv / ffmpeg / 本仓开发闭环短文。决策产品范围时仍以 `01-product` 为准。
+
+---
+
 ## 新会话推荐阅读顺序
 
 1. `01-product/001` PRD
 2. `02-architecture/003` 上游标准引用
 3. `03-delivery/001` Issue 地图（若要开工）
-4. `.cursor/rules/lesson-review-ai.mdc`
+4. 不熟工具时：`90-guides/`
+5. `.cursor/rules/lesson-review-ai.mdc`

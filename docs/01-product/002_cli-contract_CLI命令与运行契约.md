@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.5
+- **版本**：v0.6
 - **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -108,13 +108,16 @@ output/
     audio/                 # 视频抽轨或音频副本
     transcript_raw.json
     transcript_corrected.md
+    knowledge_review.json  # Pass A 专业预审（文档已定；实现待确认后）
     structure.md           # 结构要点（Markdown）
-    coach.md               # 结论摘要与建议（中间稿）
+    coach.md               # Pass B 综合建议（中间稿）
     report.md              # 最终报告
     logs/                  # 预留
 ```
 
 `run_id`：`YYYYMMDD-HHMMSS_<输入文件 SHA256 前 8 位>`，便于并排对比多次迭代。
+
+全量 `run` 在纠错之后增加 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**；假阳性闸门与 JSON 字段见 [报告契约](./003_report-contract_报告结构与验收.md) 与 [ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)（当前 Status：Proposed，确认前不改代码）。
 
 ---
 
@@ -144,3 +147,4 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v0.3 | 2026-07-24 | `transcribe`：mlx-whisper、`transcript_raw.json`、模型/语言参数 |
 | v0.4 | 2026-07-25 | `correct`：prompts 骨架、DeepSeek 兼容客户端、纠错输出路径      |
 | v0.5 | 2026-07-25 | `run` 单视频竖切：`run_id` 目录、manifest、report.md            |
+| v0.6 | 2026-07-25 | 约定 Pass A `knowledge_review.json`（实现待 ADR-0004 确认）     |

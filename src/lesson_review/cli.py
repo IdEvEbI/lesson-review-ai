@@ -22,6 +22,7 @@ from lesson_review.checks import (
     run_dependency_checks,
 )
 from lesson_review.config import load_env
+from lesson_review.correct import CorrectError, correct_transcript
 from lesson_review.media import (
     DEFAULT_AUDIO_FORMAT,
     SUPPORTED_AUDIO_FORMATS,
@@ -204,6 +205,46 @@ def transcribe_cmd(
         )
     except TranscribeError as exc:
         typer.echo(f"transcribe failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+
+    typer.echo(str(dest))
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("correct")
+def correct_cmd(
+    path: Path = typer.Argument(
+        ...,
+        exists=False,
+        help="transcript_raw.json or .md/.txt transcript path",
+    ),
+    output: Path | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output path (default: output/<stem>/transcript_corrected.md)",
+    ),
+    llm_model: Optional[str] = typer.Option(
+        None,
+        "--llm-model",
+        help="LLM model id (default: LLM_MODEL or deepseek-v4-flash)",
+    ),
+    output_dir: Path = typer.Option(
+        Path("output"),
+        "--output-dir",
+        help="Root used when -o is omitted",
+    ),
+) -> None:
+    """Correct ASR transcript with LLM (requires LLM_API_KEY)."""
+    try:
+        dest = correct_transcript(
+            path,
+            output,
+            model=llm_model,
+            output_root=output_dir,
+        )
+    except CorrectError as exc:
+        typer.echo(f"correct failed: {exc}", err=True)
         raise typer.Exit(code=exc.exit_code) from exc
 
     typer.echo(str(dest))

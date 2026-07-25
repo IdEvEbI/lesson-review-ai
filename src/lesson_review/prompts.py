@@ -14,6 +14,7 @@ PROMPT_FILES = {
     "knowledge_cases": "knowledge_cases.md",
     "structure_single": "structure_single.md",
     "structure_module": "structure_module.md",
+    "teaching_outline": "teaching_outline.md",
     "coach_feedback": "coach_feedback.md",
 }
 

@@ -12,7 +12,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from lesson_review.analyze import AnalyzeError, analyze_coach, analyze_structure
+from lesson_review.analyze import (
+    AnalyzeError,
+    analyze_coach,
+    analyze_structure,
+    analyze_teaching_outline,
+)
 from lesson_review.asr import (
     TranscribeError,
     resolve_whisper_language,
@@ -30,6 +35,7 @@ from lesson_review.checks import (
 )
 from lesson_review.correct import CorrectError, correct_transcript
 from lesson_review.knowledge import KnowledgeError, analyze_knowledge
+from lesson_review.lesson_type import infer_lesson_type, normalize_lesson_type
 from lesson_review.llm import load_llm_config
 from lesson_review.media import ExtractAudioError, extract_audio
 from lesson_review.report import render_single_report
@@ -128,6 +134,7 @@ def run_single(
     language: str | None = None,
     whisper_model: str | None = None,
     llm_model: str | None = None,
+    lesson_type: str | None = None,
     skip_llm: bool = False,
     force: bool = False,
 ) -> PipelineResult:
@@ -162,16 +169,24 @@ def run_single(
     if not skip_llm:
         llm_model_resolved = load_llm_config(model=llm_model).model
 
+    title_anchor = input_path.stem
+    if lesson_type:
+        lesson_type_resolved = normalize_lesson_type(lesson_type)
+        lesson_type_source = "cli"
+    else:
+        lesson_type_resolved, lesson_type_source = infer_lesson_type(title_anchor)
+
     audio_path: Path
     raw_path = run_dir / "transcript_raw.json"
     corrected_path = run_dir / "transcript_corrected.md"
     knowledge_path = run_dir / "knowledge_review.json"
     structure_path = run_dir / "structure.md"
+    outline_path = run_dir / "teaching_outline.md"
     coach_path = run_dir / "coach.md"
+    suggestions_path = run_dir / "suggestions.md"
     report_path = run_dir / "report.md"
     manifest_path = run_dir / "manifest.json"
     report_written: Path | None = None
-    title_anchor = input_path.stem
 
     suffix = input_path.suffix.lower()
     try:
@@ -202,6 +217,7 @@ def run_single(
             _mark(steps, "correct", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "knowledge", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "structure", "skipped", time.perf_counter(), "skip_llm")
+            _mark(steps, "teaching_outline", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "coach", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "report", "skipped", time.perf_counter(), "skip_llm")
         else:
@@ -231,11 +247,24 @@ def run_single(
             _mark(steps, "structure", "ok", t0, str(structure_path))
 
             t0 = time.perf_counter()
+            analyze_teaching_outline(
+                corrected_path,
+                structure_path,
+                knowledge_path,
+                outline_path,
+                title_anchor=title_anchor,
+                lesson_type=lesson_type_resolved,
+                model=llm_model_resolved,
+            )
+            _mark(steps, "teaching_outline", "ok", t0, str(outline_path))
+
+            t0 = time.perf_counter()
             analyze_coach(
                 corrected_path,
                 structure_path,
                 knowledge_path,
                 coach_path,
+                suggestions_path=suggestions_path,
                 model=llm_model_resolved,
             )
             _mark(steps, "coach", "ok", t0, str(coach_path))
@@ -248,8 +277,13 @@ def run_single(
                 knowledge_review=knowledge_payload,
                 structure_md=structure_path.read_text(encoding="utf-8"),
                 coach_md=coach_path.read_text(encoding="utf-8"),
+                suggestions_md=suggestions_path.read_text(encoding="utf-8"),
+                outline_md=outline_path.read_text(encoding="utf-8"),
+                lesson_type=lesson_type_resolved,
+                lesson_type_source=lesson_type_source,
                 corrected_relpath="transcript_corrected.md",
                 knowledge_relpath="knowledge_review.json",
+                outline_relpath="teaching_outline.md",
                 generated_at=_utc_now(),
             )
             report_path.write_text(report_text, encoding="utf-8")
@@ -283,6 +317,8 @@ def run_single(
                 steps=steps,
                 report_path=None,
                 skip_llm=skip_llm,
+                lesson_type=lesson_type_resolved,
+                lesson_type_source=lesson_type_source,
                 error=str(exc),
             ),
         )
@@ -303,6 +339,8 @@ def run_single(
                 steps=steps,
                 report_path=None,
                 skip_llm=skip_llm,
+                lesson_type=lesson_type_resolved,
+                lesson_type_source=lesson_type_source,
                 error=str(exc),
             ),
         )
@@ -321,6 +359,8 @@ def run_single(
             steps=steps,
             report_path="report.md" if report_written else None,
             skip_llm=skip_llm,
+            lesson_type=lesson_type_resolved,
+            lesson_type_source=lesson_type_source,
             error=None,
         ),
     )
@@ -344,6 +384,8 @@ def _manifest_payload(
     steps: list[StepRecord],
     report_path: str | None,
     skip_llm: bool,
+    lesson_type: str,
+    lesson_type_source: str,
     error: str | None,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
@@ -363,6 +405,8 @@ def _manifest_payload(
             "model": llm_model,
             "prompt_version": prompt_version_token(),
         },
+        "lesson_type": lesson_type,
+        "lesson_type_source": lesson_type_source,
         "steps": [
             {
                 "name": step.name,

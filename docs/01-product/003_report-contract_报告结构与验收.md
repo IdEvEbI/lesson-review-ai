@@ -1,8 +1,8 @@
 # 课评报告结构与验收
 
-- **版本**：v0.4
+- **版本**：v0.6
 - **日期**：2026-07-25
-- **状态**：已确认（维护者 2026-07-25；coach 四维呈现 + report 分工；讲解提纲见 §9 下一批）
+- **状态**：已确认（维护者 2026-07-25；coach 短稿仅结论/Top3/四维）
 - **关联 ADR**：
   - `docs/02-architecture/adr/0004_two-pass-knowledge-review.md`（两段式与假阳性闸门）
   - `docs/02-architecture/adr/0005_clarity-and-playback-boundary.md`（讲清度 / 待回放 / 表达噪声）
@@ -27,15 +27,18 @@
 
 ## 2. 流水线与产物（单视频）
 
-| 顺序 | 步骤                         | 主要产物                  |
-| ---- | ---------------------------- | ------------------------- |
-| 1    | 抽轨 / 转写 / 纠错           | `transcript_corrected.md` |
-| 2    | **Pass A 专业预审**          | `knowledge_review.json`   |
-| 3    | 结构（总分总、小闭环与递进） | `structure.md`            |
-| 4    | Pass B 综合建议与成稿        | `coach.md`、`report.md`   |
+| 顺序 | 步骤                         | 主要产物                                          |
+| ---- | ---------------------------- | ------------------------------------------------- |
+| 1    | 抽轨 / 转写 / 纠错           | `transcript_corrected.md`                         |
+| 2    | **Pass A 专业预审**          | `knowledge_review.json`                           |
+| 3    | 结构（总分总、小闭环与递进） | `structure.md`                                    |
+| 4    | **讲解重点提纲**             | `teaching_outline.md`（须回避 Pass A issue）      |
+| 5    | Pass B 综合建议与成稿        | `coach.md`（短稿）、`suggestions.md`、`report.md` |
 
 Pass B **必须消费** Pass A JSON；不得无视闸门另起专业指控。  
-纠错稿进入 Pass A/B 前，应去掉「以下为纠错说明」类**元前言**（实现层职责；避免污染结构与教练判断）。
+纠错稿进入 Pass A/B / 提纲前，应去掉「以下为纠错说明」类**元前言**（实现层职责）。  
+`lesson_type`：`principle` \| `code` \| `lab`（原理 / 代码 / 实操）；可由 `--lesson-type` 指定，否则按文件名启发式推断，写入 `manifest.json`（`lesson_type` + `lesson_type_source`）。  
+**`coach.md` 面向老师**：只含结论摘要、Top3、教学能力四维；**合格线/水平线与待回放**写入 `suggestions.md` 并仅并入 `report.md`，以降低发给老师时的压力与篇幅。
 
 ---
 
@@ -110,9 +113,10 @@ Pass B **必须消费** Pass A JSON；不得无视闸门另起专业指控。
 
 - 输入文件：
 - 标题锚点：
+- 课型：`principle|code|lab`（来源：cli|inferred）
 - 运行 ID：
 - 生成时间：
-- 说明：专业判断仅基于转写与标题锚点，不是对照完整讲义的判分；公屏画面与未入稿内容见「待回放确认」（本仓默认非黑板板书）。
+- 说明：专业判断仅基于转写与标题锚点，不是对照完整讲义的判分；公屏画面与未入稿内容见「待回放确认」（本仓默认非黑板板书）；授课力本步仅展开 V1–V4；讲解提纲为参考，非标准讲义。
 
 ## 结论摘要
 
@@ -190,29 +194,35 @@ Pass B **必须消费** Pass A JSON；不得无视闸门另起专业指控。
 
 ## 附录
 
-- 教练中间稿：`coach.md`
+- 教练短稿（可发老师）：`coach.md`
+- 合格线/待回放：`suggestions.md`
 - 结构要点：`structure.md`
+- 讲解重点提纲：`teaching_outline.md`
 - 纠错逐字稿：`transcript_corrected.md`
 - 专业预审：`knowledge_review.json`
 ```
 
-**`report.md` 组装原则（v0.4）**
+**`report.md` 组装原则（v0.6）**
 
-1. 元信息 → 嵌入 `coach.md` 全文（结论 / Top3 / 四维摘要 / 合格·水平线 / 待回放）→ 专业预审（渲染器）→ `structure.md` 全文 → 附录链接。
+1. 元信息（含课型）→ 嵌入 **`coach.md` 短稿** → 嵌入 **`suggestions.md`（提升建议 + 待回放）** → 专业预审（渲染器）→ `structure.md` → 讲解重点提纲 → 附录。
 2. 不在报告里再抄一份与 coach 冲突的专业结论；Pass A 细节以渲染区块为准。
 3. 结构细节以 `structure.md` 为准；coach 只引用结构结论，不重复粘贴整份结构稿进「教学能力」段。
+4. 提纲须回避 Pass A `issue`，并标注「参考提纲，非标准讲义」。
 
-### 4.1 `coach.md`（Pass B 中间稿）最低结构
+### 4.1 `coach.md`（发给老师的短稿）
 
-`coach.md` 至少包含：
+`coach.md` **只含**：
 
 1. 结论摘要
 2. 优先改进 Top 3（遵守 §1 权重与表达噪声闸门）
 3. 教学能力摘要（**仅展开 V1–V4**；V5/V6 写「本步不展开」）
-4. 合格线 / 水平线
-5. **待回放确认**（同上表）
 
-专业 / 讲清度 / 案例的「必改」项**只能**来自 Pass A 中 `verdict=issue` 且 `confidence=high` 且有摘句的条目。
+### 4.2 `suggestions.md`（仅进报告）
+
+1. 提升建议（合格线 / 水平线）
+2. **待回放确认**
+
+专业 / 讲清度 / 案例的「必改」项**只能**来自 Pass A 中 `verdict=issue` 且 `confidence=high` 且有摘句的条目。Pass B 一次 LLM 调用产出五节，落盘时拆成 `coach.md` + `suggestions.md`。
 
 ---
 
@@ -279,12 +289,12 @@ Pass B **必须消费** Pass A JSON；不得无视闸门另起专业指控。
 | v0.3   | 2026-07-25 | 增加 `clarity`、summary 禁褒、表达噪声闸门、待回放确认、Top3 权重调整；关联 ADR-0005 |
 | v0.3.1 | 2026-07-25 | 授课媒介改为公屏默认；待回放 / 改法禁止默认「板书」                                  |
 | v0.4   | 2026-07-25 | coach/report 仅展开 V1–V4；报告附录与组装原则；讲解提纲列入下一批                    |
+| v0.5   | 2026-07-25 | 实现 `teaching_outline.md` 与 `lesson_type`（principle/code/lab）                    |
+| v0.6   | 2026-07-25 | `coach.md` 仅结论/Top3/四维；提升建议与待回放进 `suggestions.md` / report            |
 
 ---
 
-## 9. 下一批（已对齐，尚未实现）
+## 9. 讲解重点提纲与课型（已实现）
 
-维护者已确认，**另一次提交**实现：
-
-1. **`teaching_outline.md`（讲解重点提纲）**：在 `structure.md` 之后生成；偏提纲而非全文示范课；**必须回避** Pass A 中 `issue` 已指出的错误讲法；标注「参考提纲，非标准讲义」。
-2. **课型字段 `lesson_type`**：预留 `principle` \| `code` \| `lab`（原理 / 代码 / 实操），供后续课型差异化提示词使用；本批仅预留契约与产物字段，不强行自动分类打满分。
+1. **`teaching_outline.md`**：在 `structure.md` 之后、`coach.md` 之前生成；偏**讲解重点提纲**；**必须回避** Pass A 中 `issue`+`high`+有摘句的条目；标注「参考提纲，非标准讲义」。
+2. **`lesson_type`**：`principle` \| `code` \| `lab`；CLI `--lesson-type` 可覆盖；否则按文件名启发式推断；写入 manifest 的 `lesson_type` / `lesson_type_source`（`cli` \| `inferred`）。课型差异化提示词可后续加强，本版先预留字段并按课型给出公屏演示提示。

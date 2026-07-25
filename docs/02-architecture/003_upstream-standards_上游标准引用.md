@@ -39,6 +39,7 @@ prompts/
   knowledge_cases.md      # Pass A：准确性 / 讲清度 / 案例 / coverage_gap（契约 v0.3）
   structure_single.md     # 单视频结构
   structure_module.md     # 模块嵌套结构
+  teaching_outline.md     # 讲解重点提纲（回避 Pass A issue；含课型）
   coach_feedback.md       # Pass B：综合建议、Top3、待回放确认（消费 Pass A）
 ```
 

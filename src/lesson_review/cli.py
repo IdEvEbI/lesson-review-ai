@@ -92,6 +92,11 @@ def run_cmd(
         "--skip-llm",
         help="Stop after transcription (no correct / structure / coach / report)",
     ),
+    lesson_type: Optional[str] = typer.Option(
+        None,
+        "--lesson-type",
+        help="principle | code | lab（默认按文件名推断）",
+    ),
     force: bool = typer.Option(
         False,
         "--force",
@@ -134,6 +139,7 @@ def run_cmd(
             language=language,
             whisper_model=whisper_model,
             llm_model=llm_model,
+            lesson_type=lesson_type,
             skip_llm=skip_llm,
             force=force,
         )

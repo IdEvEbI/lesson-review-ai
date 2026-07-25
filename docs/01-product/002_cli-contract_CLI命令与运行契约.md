@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.8
+- **版本**：v1.0
 - **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -33,6 +33,7 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 | `--language`      | 默认 `zh`（转写语言提示）                                     |
 | `--whisper-model` | 默认 `mlx-community/whisper-large-v3-turbo`                   |
 | `--llm-model`     | 默认读环境变量（如 `deepseek-v4-flash`）                      |
+| `--lesson-type`   | 可选：`principle` \| `code` \| `lab`；省略则按文件名推断      |
 | `--dry-run`       | 只校验依赖与输入，不调用模型                                  |
 | `--skip-llm`      | 只做到转写（写出 `transcript_raw.json` + manifest，不调 LLM） |
 | `--force`         | 覆盖已有同 `run_id` 碰撞的输出目录（极少见；同秒同文件）      |
@@ -110,14 +111,16 @@ output/
     transcript_corrected.md
     knowledge_review.json  # Pass A 专业预审（含 accuracy/clarity/case/coverage_gap）
     structure.md           # 结构要点（Markdown）
-    coach.md               # Pass B 综合建议（中间稿；含待回放确认）
+    teaching_outline.md    # 讲解重点提纲（回避 Pass A issue）
+    coach.md               # 发给老师的短稿（结论 / Top3 / 四维）
+    suggestions.md         # 合格线/水平线 + 待回放（仅进 report）
     report.md              # 最终报告（结构见报告契约）
     logs/                  # 预留
 ```
 
 `run_id`：`YYYYMMDD-HHMMSS_<输入文件 SHA256 前 8 位>`，便于并排对比多次迭代。
 
-全量 `run` 在纠错之后为 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**。字段、闸门、Top3 权重与「待回放确认」见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.4 已确认**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。讲解重点提纲与 `lesson_type` 见报告契约 §9（下一批提交）。
+全量 `run` 在纠错之后为 **Pass A → 结构 → 讲解提纲 → Pass B（coach/report）**。字段见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.5**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。
 
 ---
 
@@ -132,6 +135,8 @@ output/
 | `asr`                        | 引擎、模型 id                                            |
 | `llm`                        | provider、model、prompt 文件版本（git 短 hash 或版本号） |
 | `steps`                      | 各步状态与耗时                                           |
+| `lesson_type`                | `principle` \| `code` \| `lab`                           |
+| `lesson_type_source`         | `cli` \| `inferred`                                      |
 | `report_path`                | 最终报告相对路径                                         |
 
 manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全文。
@@ -150,3 +155,5 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v0.6 | 2026-07-25 | 约定 Pass A `knowledge_review.json`（实现待 ADR-0004 确认）      |
 | v0.7 | 2026-07-25 | 对齐报告契约 v0.3：`clarity`、coach/report 待回放；关联 ADR-0005 |
 | v0.8 | 2026-07-25 | 对齐报告契约 v0.4：coach 仅 V1–V4；提纲 / lesson_type 列入下一批 |
+| v0.9 | 2026-07-25 | `teaching_outline.md`、`--lesson-type`、manifest 课型字段        |
+| v1.0 | 2026-07-25 | `coach.md` 短稿 + `suggestions.md`；对齐报告契约 v0.6            |

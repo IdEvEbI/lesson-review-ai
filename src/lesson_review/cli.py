@@ -19,6 +19,7 @@ from lesson_review.checks import (
     EXIT_OK,
     EXIT_USER,
     check_input_path,
+    check_llm_api_key,
     run_dependency_checks,
 )
 from lesson_review.config import load_env
@@ -29,6 +30,7 @@ from lesson_review.media import (
     ExtractAudioError,
     extract_audio,
 )
+from lesson_review.pipeline import PipelineError, run_single
 
 app = typer.Typer(
     name="lesson-review",
@@ -65,11 +67,15 @@ def run_cmd(
         "--output-dir",
         help="Output root directory",
     ),
-    language: str = typer.Option("zh", "--language", help="ASR language hint"),
-    whisper_model: str = typer.Option(
-        "mlx-community/whisper-large-v3-turbo",
+    language: Optional[str] = typer.Option(
+        None,
+        "--language",
+        help="ASR language hint (default: WHISPER_LANGUAGE or zh)",
+    ),
+    whisper_model: Optional[str] = typer.Option(
+        None,
         "--whisper-model",
-        help="mlx-whisper model id",
+        help="mlx-whisper model id (default: WHISPER_MODEL or large-v3-turbo)",
     ),
     llm_model: Optional[str] = typer.Option(
         None,
@@ -84,17 +90,20 @@ def run_cmd(
     skip_llm: bool = typer.Option(
         False,
         "--skip-llm",
-        help="Stop after transcription (not implemented yet)",
+        help="Stop after transcription (no correct / structure / coach / report)",
+    ),
+    lesson_type: Optional[str] = typer.Option(
+        None,
+        "--lesson-type",
+        help="principle | code | lab（默认按文件名推断）",
     ),
     force: bool = typer.Option(
         False,
         "--force",
-        help="Overwrite existing run output (not implemented yet)",
+        help="Overwrite existing run output directory if present",
     ),
 ) -> None:
     """Run the lesson-review pipeline on one media file."""
-    _ = (output_dir, language, whisper_model, llm_model, skip_llm, force)
-
     input_check = check_input_path(path)
     dep_checks = run_dependency_checks()
     all_checks = [input_check, *dep_checks]
@@ -112,17 +121,39 @@ def run_cmd(
         if optional_missing:
             typer.echo(
                 "Dry-run OK for required deps. "
-                f"Optional not ready: {', '.join(optional_missing)}. "
-                "Full pipeline comes in later M1 slices."
+                f"Optional not ready: {', '.join(optional_missing)}."
             )
         else:
             typer.echo("Dry-run OK: required and optional dependencies look ready.")
+        if not skip_llm and not check_llm_api_key().ok:
+            typer.echo(
+                "Note: full run (without --skip-llm) requires LLM_API_KEY.",
+                err=True,
+            )
         raise typer.Exit(code=EXIT_OK)
 
-    typer.echo(
-        "Pipeline execution is not implemented yet. "
-        "Use --dry-run for dependency checks; ASR/LLM slices follow in M1."
-    )
+    try:
+        result = run_single(
+            path,
+            output_dir=output_dir,
+            language=language,
+            whisper_model=whisper_model,
+            llm_model=llm_model,
+            lesson_type=lesson_type,
+            skip_llm=skip_llm,
+            force=force,
+        )
+    except PipelineError as exc:
+        typer.echo(f"run failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+
+    typer.echo(f"run_id: {result.run_id}")
+    typer.echo(f"run_dir: {result.run_dir}")
+    typer.echo(f"manifest: {result.manifest_path}")
+    if result.report_path:
+        typer.echo(f"report: {result.report_path}")
+    else:
+        typer.echo("report: (skipped; use without --skip-llm for full report)")
     raise typer.Exit(code=EXIT_OK)
 
 

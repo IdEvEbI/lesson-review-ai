@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.4
+- **版本**：v1.0
 - **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -26,16 +26,21 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 
 ### 2.1 `run`（单文件）
 
-| 参数 / 选项       | 说明                                        |
-| ----------------- | ------------------------------------------- |
-| `<路径>`          | 单个视频或音频文件                          |
-| `--output-dir`    | 默认 `./output`                             |
-| `--language`      | 默认 `zh`（转写语言提示）                   |
-| `--whisper-model` | 默认 `mlx-community/whisper-large-v3-turbo` |
-| `--llm-model`     | 默认读环境变量（如 `deepseek-v4-flash`）    |
-| `--dry-run`       | 只校验依赖与输入，不调用模型                |
-| `--skip-llm`      | 只做到转写（调试用）                        |
-| `--force`         | 覆盖已有同 run 输出目录                     |
+| 参数 / 选项       | 说明                                                          |
+| ----------------- | ------------------------------------------------------------- |
+| `<路径>`          | 单个视频或音频文件                                            |
+| `--output-dir`    | 默认 `./output`                                               |
+| `--language`      | 默认 `zh`（转写语言提示）                                     |
+| `--whisper-model` | 默认 `mlx-community/whisper-large-v3-turbo`                   |
+| `--llm-model`     | 默认读环境变量（如 `deepseek-v4-flash`）                      |
+| `--lesson-type`   | 可选：`principle` \| `code` \| `lab`；省略则按文件名推断      |
+| `--dry-run`       | 只校验依赖与输入，不调用模型                                  |
+| `--skip-llm`      | 只做到转写（写出 `transcript_raw.json` + manifest，不调 LLM） |
+| `--force`         | 覆盖已有同 `run_id` 碰撞的输出目录（极少见；同秒同文件）      |
+
+完整 `run`（无 `--skip-llm`）要求 `LLM_API_KEY`；`--dry-run` 仍可将 Key 标为 optional，但会提示全量运行需要 Key。
+
+输出目录为 `output/<run_id>/`，其中 `run_id = YYYYMMDD-HHMMSS_<sha256前8位>`。
 
 ### 2.2 `run --module`（模块批处理）
 
@@ -72,7 +77,7 @@ lesson-review analyze <corrected> --mode single|module ...
 `transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。  
 `correct` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_corrected.md`（若输入为 `…/<stem>/transcript_raw.json`，则 stem 取父目录名）。
 
-五类提示词位于仓库根目录 `prompts/`（`system_tone`、`asr_correct`、`structure_single`、`structure_module`、`coach_feedback`）；本切片 `correct` 使用前两者，结构与建议提示词供 E4 编排使用。
+五类提示词位于仓库根目录 `prompts/`；`run` 全量路径使用 `system_tone` + `asr_correct` / `structure_single` / `coach_feedback`。`structure_module` 留给模块模式（E5）。
 
 ---
 
@@ -101,16 +106,21 @@ lesson-review analyze <corrected> --mode single|module ...
 output/
   <run_id>/
     manifest.json
-    audio/                 # 若从视频抽取
+    audio/                 # 视频抽轨或音频副本
     transcript_raw.json
     transcript_corrected.md
-    structure.json         # 可选中间结构
-    report.md              # 最终报告
-    logs/
-      pipeline.log
+    knowledge_review.json  # Pass A 专业预审（含 accuracy/clarity/case/coverage_gap）
+    structure.md           # 结构要点（Markdown）
+    teaching_outline.md    # 讲解重点提纲（回避 Pass A issue）
+    coach.md               # 发给老师的短稿（结论 / Top3 / 四维）
+    suggestions.md         # 合格线/水平线 + 待回放（仅进 report）
+    report.md              # 最终报告（结构见报告契约）
+    logs/                  # 预留
 ```
 
-`run_id` 建议：`YYYYMMDD-HHMMSS_<输入指纹短码>`，便于并排对比多次迭代。
+`run_id`：`YYYYMMDD-HHMMSS_<输入文件 SHA256 前 8 位>`，便于并排对比多次迭代。
+
+全量 `run` 在纠错之后为 **Pass A → 结构 → 讲解提纲 → Pass B（coach/report）**。字段见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.5**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。
 
 ---
 
@@ -125,6 +135,8 @@ output/
 | `asr`                        | 引擎、模型 id                                            |
 | `llm`                        | provider、model、prompt 文件版本（git 短 hash 或版本号） |
 | `steps`                      | 各步状态与耗时                                           |
+| `lesson_type`                | `principle` \| `code` \| `lab`                           |
+| `lesson_type_source`         | `cli` \| `inferred`                                      |
 | `report_path`                | 最终报告相对路径                                         |
 
 manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全文。
@@ -133,9 +145,15 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 
 ## 7. 修订记录
 
-| 版本 | 日期       | 说明                                                            |
-| ---- | ---------- | --------------------------------------------------------------- |
-| v0.1 | 2026-07-23 | 首版契约                                                        |
-| v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径             |
-| v0.3 | 2026-07-24 | `transcribe`：mlx-whisper、`transcript_raw.json`、模型/语言参数 |
-| v0.4 | 2026-07-25 | `correct`：prompts 骨架、DeepSeek 兼容客户端、纠错输出路径      |
+| 版本 | 日期       | 说明                                                             |
+| ---- | ---------- | ---------------------------------------------------------------- |
+| v0.1 | 2026-07-23 | 首版契约                                                         |
+| v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径              |
+| v0.3 | 2026-07-24 | `transcribe`：mlx-whisper、`transcript_raw.json`、模型/语言参数  |
+| v0.4 | 2026-07-25 | `correct`：prompts 骨架、DeepSeek 兼容客户端、纠错输出路径       |
+| v0.5 | 2026-07-25 | `run` 单视频竖切：`run_id` 目录、manifest、report.md             |
+| v0.6 | 2026-07-25 | 约定 Pass A `knowledge_review.json`（实现待 ADR-0004 确认）      |
+| v0.7 | 2026-07-25 | 对齐报告契约 v0.3：`clarity`、coach/report 待回放；关联 ADR-0005 |
+| v0.8 | 2026-07-25 | 对齐报告契约 v0.4：coach 仅 V1–V4；提纲 / lesson_type 列入下一批 |
+| v0.9 | 2026-07-25 | `teaching_outline.md`、`--lesson-type`、manifest 课型字段        |
+| v1.0 | 2026-07-25 | `coach.md` 短稿 + `suggestions.md`；对齐报告契约 v0.6            |

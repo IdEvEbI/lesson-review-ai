@@ -11,8 +11,10 @@ PROMPTS_DIR = REPO_ROOT / "prompts"
 PROMPT_FILES = {
     "system_tone": "system_tone.md",
     "asr_correct": "asr_correct.md",
+    "knowledge_cases": "knowledge_cases.md",
     "structure_single": "structure_single.md",
     "structure_module": "structure_module.md",
+    "teaching_outline": "teaching_outline.md",
     "coach_feedback": "coach_feedback.md",
 }
 

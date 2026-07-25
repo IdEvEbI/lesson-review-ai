@@ -35,7 +35,11 @@ from lesson_review.checks import (
 )
 from lesson_review.correct import CorrectError, correct_transcript
 from lesson_review.knowledge import KnowledgeError, analyze_knowledge
-from lesson_review.lesson_type import infer_lesson_type, normalize_lesson_type
+from lesson_review.lesson_type import (
+    LessonTypeError,
+    infer_lesson_type,
+    parse_lesson_type_cli,
+)
 from lesson_review.llm import load_llm_config
 from lesson_review.media import ExtractAudioError, extract_audio
 from lesson_review.report import render_single_report
@@ -171,7 +175,10 @@ def run_single(
 
     title_anchor = input_path.stem
     if lesson_type:
-        lesson_type_resolved = normalize_lesson_type(lesson_type)
+        try:
+            lesson_type_resolved = parse_lesson_type_cli(lesson_type)
+        except LessonTypeError as exc:
+            raise PipelineError(str(exc), EXIT_USER) from exc
         lesson_type_source = "cli"
     else:
         lesson_type_resolved, lesson_type_source = infer_lesson_type(title_anchor)
@@ -242,6 +249,7 @@ def run_single(
             analyze_structure(
                 corrected_path,
                 structure_path,
+                lesson_type=lesson_type_resolved,
                 model=llm_model_resolved,
             )
             _mark(steps, "structure", "ok", t0, str(structure_path))
@@ -264,6 +272,7 @@ def run_single(
                 structure_path,
                 knowledge_path,
                 coach_path,
+                lesson_type=lesson_type_resolved,
                 suggestions_path=suggestions_path,
                 model=llm_model_resolved,
             )

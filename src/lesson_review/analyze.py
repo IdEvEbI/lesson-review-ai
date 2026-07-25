@@ -36,17 +36,22 @@ def analyze_structure(
     corrected_path: Path,
     output_path: Path,
     *,
+    lesson_type: str = "principle",
     model: str | None = None,
 ) -> Path:
     """Write structure markdown using structure_single prompt."""
     corrected = _read_corrected(corrected_path)
+    lesson = normalize_lesson_type(lesson_type)
+    label = LESSON_TYPE_LABELS.get(lesson, lesson)
     try:
         system = combine_system_prompts("system_tone", "structure_single")
         cfg = load_llm_config(model=model)
         content = chat_completion(
             system=system,
             user=(
+                f"lesson_type: {lesson}（{label}）\n"
                 "请根据下列纠错逐字稿，提炼总分总与小闭环/递进。"
+                "若 lesson_type=lab，须按提示词做 L1/L2/L3 自检。"
                 "不要判定知识对错或案例好坏。"
                 "直接输出 Markdown 正文，不要用代码块包裹。\n\n"
                 + corrected
@@ -91,6 +96,7 @@ def analyze_coach(
     knowledge_path: Path,
     output_path: Path,
     *,
+    lesson_type: str = "principle",
     suggestions_path: Path | None = None,
     model: str | None = None,
 ) -> tuple[Path, Path]:
@@ -109,15 +115,20 @@ def analyze_coach(
         knowledge_pretty = knowledge_raw
 
     suggestions_dest = suggestions_path or (output_path.parent / "suggestions.md")
+    lesson = normalize_lesson_type(lesson_type)
+    label = LESSON_TYPE_LABELS.get(lesson, lesson)
 
     user = "\n".join(
         [
+            f"lesson_type: {lesson}（{label}）",
             "请消费下列 Pass A JSON 与结构要点，撰写 Pass B 全部五节（按提示词顺序）。",
             "知识/讲清度/案例必改项只能来自 Pass A 中 "
             "accuracy|clarity|case 且 issue+high+有摘句的条目。",
             "须含「提升建议」与「待回放确认」节；遵守表达噪声闸门与 Top3 权重。",
+            "若 lesson_type=lab，Top3 在准确性/讲清度之后优先 L1≥L2≥L3；"
+            "禁止把并列多验证或主线未完就展开备选扩展写成优点。",
             "教学能力仅展开 V1–V4；V5/V6 写本步不展开。",
-            "授课媒介为公屏（PPT/笔记/IDE），改法禁止默认板书。",
+            "授课媒介为共屏（PPT/笔记/IDE），改法禁止默认板书。",
             "直接输出 Markdown 正文，不要用 ```markdown 代码块包裹，不要写前言。",
             "",
             "## Pass A knowledge_review.json",
@@ -146,7 +157,7 @@ def analyze_coach(
             "## 待回放确认（转写无法判定）\n\n"
             "| 项 | 为何无法仅凭稿判断 | 建议回放关注点 |\n"
             "| -- | ------------------ | -------------- |\n"
-            "| （无） | 模型未输出待回放节 | 对照公屏回放确认 |\n"
+            "| （无） | 模型未输出待回放节 | 对照共屏回放确认 |\n"
         )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -216,7 +227,7 @@ def analyze_teaching_outline(
             f"title_anchor: {title_anchor}",
             f"lesson_type: {lesson}（{label}）",
             "请输出讲解重点提纲 Markdown（偏提纲，非全文示范课）。",
-            "必须回避下列 Pass A issue；公屏授课，禁止默认板书。",
+            "必须回避下列 Pass A issue；共屏授课，禁止默认板书。",
             "直接输出 Markdown 正文，不要用代码块包裹，不要写前言。",
             "",
             "## 须回避的 Pass A issue",

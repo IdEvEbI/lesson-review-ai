@@ -8,6 +8,7 @@ from pathlib import Path
 from lesson_review.checks import EXIT_USER
 from lesson_review.llm import LLMError, chat_completion, load_llm_config
 from lesson_review.prompts import PromptError, combine_system_prompts
+from lesson_review.transcript_text import strip_correction_preamble
 
 
 class AnalyzeError(Exception):
@@ -21,7 +22,7 @@ class AnalyzeError(Exception):
 def _read_corrected(path: Path) -> str:
     if not path.is_file():
         raise AnalyzeError(f"corrected transcript missing: {path}", EXIT_USER)
-    text = path.read_text(encoding="utf-8").strip()
+    text = strip_correction_preamble(path.read_text(encoding="utf-8"))
     if not text:
         raise AnalyzeError(f"corrected transcript empty: {path}", EXIT_USER)
     return text
@@ -83,7 +84,10 @@ def analyze_coach(
     user = "\n".join(
         [
             "请消费下列 Pass A JSON 与结构要点，撰写 Pass B 报告段落。",
-            "知识/案例必改项只能来自 Pass A 中 issue+high+有摘句的条目。",
+            "知识/讲清度/案例必改项只能来自 Pass A 中 "
+            "accuracy|clarity|case 且 issue+high+有摘句的条目。",
+            "须含「待回放确认」节；遵守表达噪声闸门与 Top3 权重。",
+            "授课媒介为公屏（PPT/笔记/IDE），改法禁止默认板书。",
             "",
             "## Pass A knowledge_review.json",
             knowledge_pretty,

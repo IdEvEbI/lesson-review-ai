@@ -42,7 +42,7 @@ prompts/
   coach_feedback.md       # Pass B：综合建议、Top3、待回放确认（消费 Pass A）
 ```
 
-变更评价维度时：先改上游或确认上游已有表述 → 更新本仓报告契约 / ADR → 再改对应 `prompts/` → 用同一课例回归对比报告差异。专业预审两段式见 [ADR-0004](./adr/0004_two-pass-knowledge-review.md)；讲清度与待回放见 [ADR-0005](./adr/0005_clarity-and-playback-boundary.md)（当前 Proposed，确认前先不改 prompts）。
+变更评价维度时：先改上游或确认上游已有表述 → 更新本仓报告契约 / ADR → 再改对应 `prompts/` → 用同一课例回归对比报告差异。专业预审两段式见 [ADR-0004](./adr/0004_two-pass-knowledge-review.md)；讲清度与待回放见 [ADR-0005](./adr/0005_clarity-and-playback-boundary.md)（Accepted）。
 
 ---
 

@@ -82,6 +82,46 @@ def test_qualifying_issue_with_quote() -> None:
     assert issues[0]["id"] == "k3"
 
 
+def test_qualifying_clarity_issue_with_quote() -> None:
+    raw = {
+        "summary": "QKV 关系未讲清",
+        "anchor_strength": "strong",
+        "findings": [
+            {
+                "id": "k5",
+                "category": "clarity",
+                "claim": "仅有类比，未说明 Q 对 K 匹配与加权 V",
+                "evidence": {"quote": "我们介绍了注意力机制该如何实现吧？我们提到了 QKV"},
+                "verdict": "issue",
+                "confidence": "high",
+                "remediation": "补一句：Q 与各 K 算相似度得权重，再对 V 加权求和",
+            }
+        ],
+    }
+    out = sanitize_knowledge_review(raw, title_anchor="注意力机制_QKV简介")
+    issues = qualifying_issues(out)
+    assert len(issues) == 1
+    assert issues[0]["category"] == "clarity"
+
+
+def test_unknown_category_falls_back_to_accuracy() -> None:
+    raw = {
+        "summary": "x",
+        "findings": [
+            {
+                "id": "k6",
+                "category": "unknown_cat",
+                "claim": "x",
+                "evidence": {"quote": "一句"},
+                "verdict": "pass",
+                "confidence": "high",
+            }
+        ],
+    }
+    out = sanitize_knowledge_review(raw, title_anchor="注意力机制概念介绍")
+    assert out["findings"][0]["category"] == "accuracy"
+
+
 def test_weak_anchor_blocks_high_issue() -> None:
     raw = {
         "summary": "x",

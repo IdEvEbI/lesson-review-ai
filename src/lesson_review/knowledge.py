@@ -10,9 +10,11 @@ from typing import Any
 from lesson_review.checks import EXIT_PIPELINE, EXIT_USER
 from lesson_review.llm import LLMError, chat_completion, load_llm_config
 from lesson_review.prompts import PromptError, combine_system_prompts
+from lesson_review.transcript_text import strip_correction_preamble
 
 SCHEMA_VERSION = 1
-VALID_CATEGORIES = {"accuracy", "case", "coverage_gap"}
+VALID_CATEGORIES = {"accuracy", "clarity", "case", "coverage_gap"}
+QUALIFYING_CATEGORIES = {"accuracy", "clarity", "case"}
 VALID_VERDICTS = {"pass", "issue", "unverified"}
 VALID_CONFIDENCE = {"high", "low"}
 
@@ -138,7 +140,7 @@ def sanitize_knowledge_review(
         if isinstance(remediation, str) and remediation.strip():
             finding["remediation"] = remediation.strip()
         elif verdict == "unverified":
-            finding["remediation"] = "建议对照讲义或回放确认后再定论。"
+            finding["remediation"] = "建议对照讲义或公屏回放确认后再定论。"
         findings_out.append(finding)
 
     summary = str(raw.get("summary") or "").strip()
@@ -155,12 +157,12 @@ def sanitize_knowledge_review(
 
 
 def qualifying_issues(review: dict[str, Any]) -> list[dict[str, Any]]:
-    """Findings allowed into 合格线 / Top3 knowledge-or-case slots."""
+    """Findings allowed into 合格线 / Top3 knowledge, clarity, or case slots."""
     result: list[dict[str, Any]] = []
     for item in review.get("findings") or []:
         if not isinstance(item, dict):
             continue
-        if item.get("category") not in {"accuracy", "case"}:
+        if item.get("category") not in QUALIFYING_CATEGORIES:
             continue
         if item.get("verdict") != "issue":
             continue
@@ -182,7 +184,9 @@ def analyze_knowledge(
     """Run Pass A and write sanitized knowledge_review.json. Returns payload."""
     if not corrected_path.is_file():
         raise KnowledgeError(f"corrected transcript missing: {corrected_path}", EXIT_USER)
-    corrected = corrected_path.read_text(encoding="utf-8").strip()
+    corrected = strip_correction_preamble(
+        corrected_path.read_text(encoding="utf-8"),
+    )
     if not corrected:
         raise KnowledgeError(f"corrected transcript empty: {corrected_path}", EXIT_USER)
 
@@ -192,7 +196,7 @@ def analyze_knowledge(
             f"title_anchor: {title_anchor}",
             f"anchor_strength_hint: {strength_hint}",
             "",
-            "请输出 knowledge_review JSON（遵守假阳性硬约束）。",
+            "请输出 knowledge_review JSON（遵守假阳性硬约束；含 clarity 与 summary 禁褒）。",
             "",
             "## 纠错逐字稿",
             corrected,

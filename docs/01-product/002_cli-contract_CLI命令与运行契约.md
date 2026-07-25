@@ -117,7 +117,7 @@ output/
 
 `run_id`：`YYYYMMDD-HHMMSS_<输入文件 SHA256 前 8 位>`，便于并排对比多次迭代。
 
-全量 `run` 在纠错之后为 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**。字段、闸门、Top3 权重与「待回放确认」见 [报告契约](./003_report-contract_报告结构与验收.md)（当前 **v0.3 待确认**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。v0.3 确认前**先不改** prompts / 闸门代码。
+全量 `run` 在纠错之后为 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**。字段、闸门、Top3 权重与「待回放确认」见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.3 已确认**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。
 
 ---
 

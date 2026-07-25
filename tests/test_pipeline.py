@@ -27,7 +27,14 @@ def test_render_single_report_contains_contract_sections() -> None:
                 "evidence": {"quote": "注意力是……"},
                 "verdict": "pass",
                 "confidence": "high",
-            }
+            },
+            {
+                "category": "clarity",
+                "claim": "机制未讲清",
+                "evidence": {"quote": "我们介绍了如何实现"},
+                "verdict": "issue",
+                "confidence": "high",
+            },
         ],
     }
     text = render_single_report(
@@ -36,13 +43,16 @@ def test_render_single_report_contains_contract_sections() -> None:
         title_anchor="注意力机制概念介绍",
         knowledge_review=review,
         structure_md="## 课程结构与要点\n\n- 开场总：示例",
-        coach_md="## 结论摘要\n\n可读。\n\n## 优先改进 Top 3\n",
+        coach_md="## 结论摘要\n\n可读。\n\n## 优先改进 Top 3\n\n## 待回放确认（转写无法判定）\n\n| 项 | 为何无法仅凭稿判断 | 建议回放关注点 |\n",
         corrected_relpath="transcript_corrected.md",
     )
     assert "# 课评报告 · 单视频" in text
     assert "## 元信息" in text
     assert "标题锚点" in text
-    assert "## 专业预审（知识与案例）" in text
+    assert "## 专业预审（知识、讲清度与案例）" in text
+    assert "### 讲清度（核心关系 / 机制）" in text
+    assert "机制未讲清" in text
+    assert "待回放确认" in text
     assert "## 附录" in text
     assert "knowledge_review.json" in text
 
@@ -145,7 +155,8 @@ def test_run_single_full_mocked(tmp_path: Path) -> None:
     assert result.report_path is not None
     report = result.report_path.read_text(encoding="utf-8")
     assert "# 课评报告 · 单视频" in report
-    assert "## 专业预审（知识与案例）" in report
+    assert "## 专业预审（知识、讲清度与案例）" in report
+    assert "### 讲清度（核心关系 / 机制）" in report
     assert (result.run_dir / "knowledge_review.json").is_file()
     manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
     assert manifest["report_path"] == "report.md"

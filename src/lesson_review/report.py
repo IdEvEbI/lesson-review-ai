@@ -38,6 +38,7 @@ def render_knowledge_sections(review: dict[str, Any]) -> str:
     """Deterministic Markdown for Pass A findings (gates already applied)."""
     findings = [f for f in (review.get("findings") or []) if isinstance(f, dict)]
     accuracy = [f for f in findings if f.get("category") == "accuracy"]
+    clarity = [f for f in findings if f.get("category") == "clarity"]
     cases = [f for f in findings if f.get("category") == "case"]
     pending = [
         f
@@ -46,10 +47,8 @@ def render_knowledge_sections(review: dict[str, Any]) -> str:
         or f.get("verdict") == "unverified"
         or f.get("confidence") == "low"
     ]
-    # Avoid double-listing: pending section focuses on unverified/gaps;
-    # accuracy/case sections still list all in those categories.
     parts = [
-        "## 专业预审（知识与案例）",
+        "## 专业预审（知识、讲清度与案例）",
         "",
         f"- 预审摘要：{review.get('summary') or '（无）'}",
         f"- 标题锚点强度：`{review.get('anchor_strength')}`",
@@ -57,6 +56,10 @@ def render_knowledge_sections(review: dict[str, Any]) -> str:
         "### 知识准确性",
         "",
         *_format_finding_lines(accuracy),
+        "",
+        "### 讲清度（核心关系 / 机制）",
+        "",
+        *_format_finding_lines(clarity),
         "",
         "### 案例恰当性",
         "",
@@ -98,7 +101,8 @@ def render_single_report(
         f"- 标题锚点：`{title_anchor}`",
         f"- 运行 ID：`{run_id}`",
         f"- 生成时间：{stamp}",
-        "- 说明：专业判断仅基于转写与标题锚点，不是对照完整讲义的判分。",
+        "- 说明：专业判断仅基于转写与标题锚点，不是对照完整讲义的判分；"
+        "公屏画面与未入稿内容见「待回放确认」（本仓默认非黑板板书）。",
         "",
         coach_body,
         "",

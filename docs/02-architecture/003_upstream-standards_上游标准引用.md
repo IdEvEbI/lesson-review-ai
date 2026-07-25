@@ -39,11 +39,11 @@ prompts/
   knowledge_cases.md      # Pass A：准确性 / 讲清度 / 案例 / coverage_gap（契约 v0.3）
   structure_single.md     # 单视频结构
   structure_module.md     # 模块嵌套结构
-  teaching_outline.md     # 讲解重点提纲（回避 Pass A issue；含课型）
+  teaching_outline.md     # 讲解重点提纲（回避 Pass A issue；含课型；lab 见契约 §10）
   coach_feedback.md       # Pass B：综合建议、Top3、待回放确认（消费 Pass A）
 ```
 
-变更评价维度时：先改上游或确认上游已有表述 → 更新本仓报告契约 / ADR → 再改对应 `prompts/` → 用同一课例回归对比报告差异。专业预审两段式见 [ADR-0004](./adr/0004_two-pass-knowledge-review.md)；讲清度与待回放见 [ADR-0005](./adr/0005_clarity-and-playback-boundary.md)（Accepted）。
+变更评价维度时：先改上游或确认上游已有表述 → 更新本仓报告契约 / ADR → 再改对应 `prompts/` → 用同一课例回归对比报告差异。专业预审两段式见 [ADR-0004](./adr/0004_two-pass-knowledge-review.md)；讲清度与待回放见 [ADR-0005](./adr/0005_clarity-and-playback-boundary.md)；实操课三条见 [ADR-0006](./adr/0006_lab-pedagogy-checks.md)（当前 Proposed，确认前先不改 prompts）。
 
 ---
 
@@ -55,8 +55,9 @@ prompts/
 
 ## 5. 修订记录
 
-| 版本 | 日期       | 说明                                              |
-| ---- | ---------- | ------------------------------------------------- |
-| v0.1 | 2026-07-23 | 自 `docs/00-context/004` 迁入                     |
-| v0.2 | 2026-07-25 | Pass A 对齐 V1；六力非 MVP 门禁；prompts 列表更新 |
-| v0.3 | 2026-07-25 | 对齐报告契约 v0.3 / ADR-0005（clarity、待回放）   |
+| 版本 | 日期       | 说明                                                            |
+| ---- | ---------- | --------------------------------------------------------------- |
+| v0.1 | 2026-07-23 | 自 `docs/00-context/004` 迁入                                   |
+| v0.2 | 2026-07-25 | Pass A 对齐 V1；六力非 MVP 门禁；prompts 列表更新               |
+| v0.3 | 2026-07-25 | 对齐报告契约 v0.3 / ADR-0005（clarity、待回放）                 |
+| v0.4 | 2026-07-25 | 对齐报告契约 v0.7.1 / ADR-0006（实操课 L1/L2/L3；课型无关措辞） |

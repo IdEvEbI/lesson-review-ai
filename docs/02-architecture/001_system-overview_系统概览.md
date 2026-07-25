@@ -67,7 +67,7 @@ sequenceDiagram
   W-->>C: transcript_raw.json
   C->>L: correct
   L-->>C: transcript_corrected.md
-  C->>L: Pass A knowledge/cases
+  C->>L: Pass A knowledge/clarity/cases
   L-->>C: knowledge_review.json
   C->>L: structure + coach Pass B
   L-->>C: structure.md / coach.md
@@ -121,3 +121,4 @@ lesson-review-ai/
 | ---- | ---------- | -------------------------------------- |
 | v0.1 | 2026-07-23 | 首版概览                               |
 | v0.2 | 2026-07-25 | 数据流改为 Pass A / Pass B；组件表同步 |
+| v0.3 | 2026-07-25 | 数据流标注含 clarity（报告契约 v0.3）  |

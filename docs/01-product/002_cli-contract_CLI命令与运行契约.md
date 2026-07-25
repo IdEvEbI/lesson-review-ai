@@ -1,7 +1,7 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.3
-- **日期**：2026-07-24
+- **版本**：v0.4
+- **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
 ---
@@ -51,7 +51,7 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 ```bash
 lesson-review extract-audio <视频> [-o <音频>] [--format mp3|wav] [--output-dir ./output]
 lesson-review transcribe <音频> [-o <transcript.json>] [--language zh] [--whisper-model <id>] [--output-dir ./output]
-lesson-review correct <transcript> -o <corrected.md>
+lesson-review correct <transcript> [-o <corrected.md>] [--llm-model <id>] [--output-dir ./output]
 lesson-review analyze <corrected> --mode single|module ...
 ```
 
@@ -64,10 +64,15 @@ lesson-review analyze <corrected> --mode single|module ...
 | `transcribe`      | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）   |
 | `--language`      | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                |
 | `--whisper-model` | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo` |
+| `correct`         | LLM 纠错（补标点、降噪）；写出 `transcript_corrected.md`            |
+| `--llm-model`     | 默认读 `LLM_MODEL`，否则 `deepseek-v4-flash`                        |
 
-子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` / `transcribe` 不要求 `LLM_API_KEY`。`transcribe` 需要可导入的 `mlx-whisper` 与 PATH 上的 `ffmpeg`。
+子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` / `transcribe` 不要求 `LLM_API_KEY`。`correct` **要求** `LLM_API_KEY`。`transcribe` 需要可导入的 `mlx-whisper` 与 PATH 上的 `ffmpeg`。
 
-`transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。
+`transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。  
+`correct` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_corrected.md`（若输入为 `…/<stem>/transcript_raw.json`，则 stem 取父目录名）。
+
+五类提示词位于仓库根目录 `prompts/`（`system_tone`、`asr_correct`、`structure_single`、`structure_module`、`coach_feedback`）；本切片 `correct` 使用前两者，结构与建议提示词供 E4 编排使用。
 
 ---
 
@@ -133,3 +138,4 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v0.1 | 2026-07-23 | 首版契约                                                        |
 | v0.2 | 2026-07-24 | `extract-audio`：默认 mp3、`--format`、默认输出路径             |
 | v0.3 | 2026-07-24 | `transcribe`：mlx-whisper、`transcript_raw.json`、模型/语言参数 |
+| v0.4 | 2026-07-25 | `correct`：prompts 骨架、DeepSeek 兼容客户端、纠错输出路径      |

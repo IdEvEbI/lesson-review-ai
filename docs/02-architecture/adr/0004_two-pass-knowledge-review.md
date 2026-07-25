@@ -1,6 +1,6 @@
 # ADR-0004：专业知识预审两段式（Pass A / Pass B）与假阳性闸门
 
-- **Status**：Proposed（待维护者确认文档后 Accepted，再实现）
+- **Status**：Accepted
 - **Date**：2026-07-25
 
 ## Context
@@ -55,4 +55,4 @@
 - 报告契约：`docs/01-product/003_report-contract_报告结构与验收.md`
 - CLI 契约：`docs/01-product/002_cli-contract_CLI命令与运行契约.md`
 - 上游：`002_教学能力模型_授课力维度体系_双场景.md`（V1）
-- 实现前状态：本文档确认前 **不改代码 / prompts**
+- 实现状态：维护者已确认文档；本 ADR 为 Accepted，按报告契约实现 Pass A/B

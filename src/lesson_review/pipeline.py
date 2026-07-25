@@ -29,6 +29,7 @@ from lesson_review.checks import (
     check_llm_api_key,
 )
 from lesson_review.correct import CorrectError, correct_transcript
+from lesson_review.knowledge import KnowledgeError, analyze_knowledge
 from lesson_review.llm import load_llm_config
 from lesson_review.media import ExtractAudioError, extract_audio
 from lesson_review.report import render_single_report
@@ -164,11 +165,13 @@ def run_single(
     audio_path: Path
     raw_path = run_dir / "transcript_raw.json"
     corrected_path = run_dir / "transcript_corrected.md"
+    knowledge_path = run_dir / "knowledge_review.json"
     structure_path = run_dir / "structure.md"
     coach_path = run_dir / "coach.md"
     report_path = run_dir / "report.md"
     manifest_path = run_dir / "manifest.json"
     report_written: Path | None = None
+    title_anchor = input_path.stem
 
     suffix = input_path.suffix.lower()
     try:
@@ -197,6 +200,7 @@ def run_single(
 
         if skip_llm:
             _mark(steps, "correct", "skipped", time.perf_counter(), "skip_llm")
+            _mark(steps, "knowledge", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "structure", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "coach", "skipped", time.perf_counter(), "skip_llm")
             _mark(steps, "report", "skipped", time.perf_counter(), "skip_llm")
@@ -210,6 +214,15 @@ def run_single(
             _mark(steps, "correct", "ok", t0, str(corrected_path))
 
             t0 = time.perf_counter()
+            knowledge_payload = analyze_knowledge(
+                corrected_path,
+                knowledge_path,
+                title_anchor=title_anchor,
+                model=llm_model_resolved,
+            )
+            _mark(steps, "knowledge", "ok", t0, str(knowledge_path))
+
+            t0 = time.perf_counter()
             analyze_structure(
                 corrected_path,
                 structure_path,
@@ -221,6 +234,7 @@ def run_single(
             analyze_coach(
                 corrected_path,
                 structure_path,
+                knowledge_path,
                 coach_path,
                 model=llm_model_resolved,
             )
@@ -230,16 +244,25 @@ def run_single(
             report_text = render_single_report(
                 run_id=run_id,
                 input_path=input_path.resolve(),
+                title_anchor=title_anchor,
+                knowledge_review=knowledge_payload,
                 structure_md=structure_path.read_text(encoding="utf-8"),
                 coach_md=coach_path.read_text(encoding="utf-8"),
                 corrected_relpath="transcript_corrected.md",
+                knowledge_relpath="knowledge_review.json",
                 generated_at=_utc_now(),
             )
             report_path.write_text(report_text, encoding="utf-8")
             report_written = report_path.resolve()
             _mark(steps, "report", "ok", t0, str(report_path))
 
-    except (ExtractAudioError, TranscribeError, CorrectError, AnalyzeError) as exc:
+    except (
+        ExtractAudioError,
+        TranscribeError,
+        CorrectError,
+        KnowledgeError,
+        AnalyzeError,
+    ) as exc:
         _mark(
             steps,
             getattr(exc, "step", type(exc).__name__),

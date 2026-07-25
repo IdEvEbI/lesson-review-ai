@@ -1,7 +1,8 @@
-"""LLM analysis steps: structure and coach feedback."""
+"""LLM analysis steps: structure and coach feedback (Pass B)."""
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from lesson_review.checks import EXIT_USER
@@ -39,7 +40,11 @@ def analyze_structure(
         cfg = load_llm_config(model=model)
         content = chat_completion(
             system=system,
-            user="请根据下列纠错逐字稿，提炼单视频课程结构与要点。\n\n" + corrected,
+            user=(
+                "请根据下列纠错逐字稿，提炼总分总与小闭环/递进。"
+                "不要判定知识对错或案例好坏。\n\n"
+                + corrected
+            ),
             config=cfg,
         )
     except PromptError as exc:
@@ -56,19 +61,32 @@ def analyze_structure(
 def analyze_coach(
     corrected_path: Path,
     structure_path: Path,
+    knowledge_path: Path,
     output_path: Path,
     *,
     model: str | None = None,
 ) -> Path:
-    """Write coach feedback markdown using coach_feedback prompt."""
+    """Write coach feedback markdown using coach_feedback prompt (Pass B)."""
     corrected = _read_corrected(corrected_path)
     if not structure_path.is_file():
         raise AnalyzeError(f"structure file missing: {structure_path}", EXIT_USER)
+    if not knowledge_path.is_file():
+        raise AnalyzeError(f"knowledge review missing: {knowledge_path}", EXIT_USER)
     structure = structure_path.read_text(encoding="utf-8").strip()
+    knowledge_raw = knowledge_path.read_text(encoding="utf-8").strip()
+    try:
+        knowledge_obj = json.loads(knowledge_raw)
+        knowledge_pretty = json.dumps(knowledge_obj, ensure_ascii=False, indent=2)
+    except json.JSONDecodeError:
+        knowledge_pretty = knowledge_raw
 
     user = "\n".join(
         [
-            "请根据纠错逐字稿与结构要点，撰写结论摘要与提升建议（合格线 / 水平线分开）。",
+            "请消费下列 Pass A JSON 与结构要点，撰写 Pass B 报告段落。",
+            "知识/案例必改项只能来自 Pass A 中 issue+high+有摘句的条目。",
+            "",
+            "## Pass A knowledge_review.json",
+            knowledge_pretty,
             "",
             "## 结构要点",
             structure or "（空）",

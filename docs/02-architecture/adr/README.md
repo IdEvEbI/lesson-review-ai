@@ -11,4 +11,4 @@
 | [0003](./0003_llm-deepseek-openai-compatible.md) | LLM：DeepSeek（OpenAI 兼容） | Accepted |
 | [0004](./0004_two-pass-knowledge-review.md)      | 专业预审两段式与假阳性闸门   | Accepted |
 | [0005](./0005_clarity-and-playback-boundary.md)  | 讲清度、待回放与表达噪声闸门 | Accepted |
-| [0006](./0006_lab-pedagogy-checks.md)            | 实操课三条套路与课型推断     | Proposed |
+| [0006](./0006_lab-pedagogy-checks.md)            | 实操课三条套路与课型推断     | Accepted |

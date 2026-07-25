@@ -58,9 +58,9 @@
 ## 硬约束
 
 1. `verdict=issue` **必须**有非空 `evidence.quote`（来自纠错稿）；否则用 `unverified`。
-2. `category=coverage_gap` → **必须** `verdict=unverified`，改法写「对照讲义或公屏回放确认」。
+2. `category=coverage_gap` → **必须** `verdict=unverified`，改法写「对照讲义或共屏回放确认」。
 3. 标题只定主题范围，**不是**完整讲义；禁止用百科「应讲清单」扩大指控。
 4. `anchor_strength=weak`（标题过泛如 day01）时：少下 `issue`，多 `unverified` / `pass`。
 5. 对事不对人；不点名；完整句子。
 6. 拿不准就 `unverified` + `confidence=low`。
-7. `remediation` 用语对齐公屏授课：写「在公屏 PPT / 笔记 / IDE 中演示」，**禁止**默认「板书」。
+7. `remediation` 用语对齐共屏授课：写「在共屏 PPT / 笔记 / IDE 中演示」，**禁止**默认「板书」。

@@ -140,7 +140,7 @@ def sanitize_knowledge_review(
         if isinstance(remediation, str) and remediation.strip():
             finding["remediation"] = remediation.strip()
         elif verdict == "unverified":
-            finding["remediation"] = "建议对照讲义或公屏回放确认后再定论。"
+            finding["remediation"] = "建议对照讲义或共屏回放确认后再定论。"
         findings_out.append(finding)
 
     summary = str(raw.get("summary") or "").strip()

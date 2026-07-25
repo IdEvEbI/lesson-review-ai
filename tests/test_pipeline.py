@@ -55,6 +55,9 @@ def test_render_single_report_contains_contract_sections() -> None:
     assert "待回放确认" in text
     assert "## 附录" in text
     assert "knowledge_review.json" in text
+    assert "coach.md" in text
+    assert "structure.md" in text
+    assert "授课力本步仅展开 V1–V4" in text
 
 
 def test_run_single_skip_llm_mocked(tmp_path: Path) -> None:

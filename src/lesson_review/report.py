@@ -102,7 +102,8 @@ def render_single_report(
         f"- 运行 ID：`{run_id}`",
         f"- 生成时间：{stamp}",
         "- 说明：专业判断仅基于转写与标题锚点，不是对照完整讲义的判分；"
-        "公屏画面与未入稿内容见「待回放确认」（本仓默认非黑板板书）。",
+        "公屏画面与未入稿内容见「待回放确认」（本仓默认非黑板板书）；"
+        "授课力本步仅展开 V1–V4。",
         "",
         coach_body,
         "",
@@ -113,6 +114,8 @@ def render_single_report(
         "",
         f"- 纠错逐字稿：`{corrected_relpath}`",
         f"- 专业预审：`{knowledge_relpath}`",
+        "- 教练中间稿：`coach.md`",
+        "- 结构要点：`structure.md`",
         "",
     ]
     return "\n".join(parts)

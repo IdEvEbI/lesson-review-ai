@@ -87,6 +87,7 @@ def analyze_coach(
             "知识/讲清度/案例必改项只能来自 Pass A 中 "
             "accuracy|clarity|case 且 issue+high+有摘句的条目。",
             "须含「待回放确认」节；遵守表达噪声闸门与 Top3 权重。",
+            "教学能力仅展开 V1–V4；V5/V6 写本步不展开。",
             "授课媒介为公屏（PPT/笔记/IDE），改法禁止默认板书。",
             "",
             "## Pass A knowledge_review.json",

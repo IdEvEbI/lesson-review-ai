@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v0.7
+- **版本**：v0.8
 - **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -117,7 +117,7 @@ output/
 
 `run_id`：`YYYYMMDD-HHMMSS_<输入文件 SHA256 前 8 位>`，便于并排对比多次迭代。
 
-全量 `run` 在纠错之后为 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**。字段、闸门、Top3 权重与「待回放确认」见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.3 已确认**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。
+全量 `run` 在纠错之后为 **Pass A（专业预审）→ Pass B（结构/建议/成稿）**。字段、闸门、Top3 权重与「待回放确认」见 [报告契约](./003_report-contract_报告结构与验收.md)（**v0.4 已确认**）、[ADR-0004](../02-architecture/adr/0004_two-pass-knowledge-review.md)、[ADR-0005](../02-architecture/adr/0005_clarity-and-playback-boundary.md)。讲解重点提纲与 `lesson_type` 见报告契约 §9（下一批提交）。
 
 ---
 
@@ -149,3 +149,4 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v0.5 | 2026-07-25 | `run` 单视频竖切：`run_id` 目录、manifest、report.md             |
 | v0.6 | 2026-07-25 | 约定 Pass A `knowledge_review.json`（实现待 ADR-0004 确认）      |
 | v0.7 | 2026-07-25 | 对齐报告契约 v0.3：`clarity`、coach/report 待回放；关联 ADR-0005 |
+| v0.8 | 2026-07-25 | 对齐报告契约 v0.4：coach 仅 V1–V4；提纲 / lesson_type 列入下一批 |

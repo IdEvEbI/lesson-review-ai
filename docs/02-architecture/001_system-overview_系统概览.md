@@ -1,7 +1,7 @@
 # 系统概览
 
-- **版本**：v0.3
-- **日期**：2026-07-25
+- **版本**：v0.5
+- **日期**：2026-07-29
 - **关联 ADR**：`docs/02-architecture/adr/`（含 ADR-0004 两段式预审、ADR-0005 讲清度与共屏待回放）
 
 ---
@@ -37,15 +37,16 @@ flowchart LR
 
 ## 2. 逻辑组件
 
-| 组件           | 职责                                              | 技术                        |
-| -------------- | ------------------------------------------------- | --------------------------- |
-| CLI            | 解析参数、退出码、调用编排                        | Python（Typer 或 argparse） |
-| Media          | 视频抽轨、格式探测                                | ffmpeg                      |
-| ASR            | 语音转文字、时间戳                                | mlx-whisper                 |
-| LLM Client     | 纠错、**Pass A 专业预审**、结构、建议；重试与限流 | OpenAI 兼容 SDK → DeepSeek  |
-| Prompt Store   | 系统语气、分步任务模板（含 knowledge 预审）       | `prompts/*.md` + 版本记录   |
-| Report Builder | 合并 Pass A JSON 与后续 Markdown 为 `report.md`   | Python 拼接（MVP）          |
-| Manifest       | 运行元数据、可复现                                | `manifest.json`             |
+| 组件           | 职责                                                          | 技术                        |
+| -------------- | ------------------------------------------------------------- | --------------------------- |
+| CLI            | 解析参数、退出码、调用编排                                    | Python（Typer 或 argparse） |
+| Media          | 视频抽轨、格式探测                                            | ffmpeg                      |
+| ASR            | 语音转文字、时间戳                                            | mlx-whisper                 |
+| LLM Client     | 纠错、**Pass A 专业预审**、结构、建议；重试与限流             | OpenAI 兼容 SDK → DeepSeek  |
+| Prompt Store   | 系统语气、分步任务模板（含 knowledge 预审、conduct 言行扫描） | `prompts/*.md` + 版本记录   |
+| Report Builder | 合并 Pass A JSON 与后续 Markdown 为 `report.md`               | Python 拼接（MVP）          |
+| Manifest       | 运行元数据、可复现                                            | `manifest.json`             |
+| Batch Conduct  | 目录批处理：转写纠错 + 言行扫描（旁路，非 `run`）             | `batch-conduct` CLI         |
 
 ---
 
@@ -76,6 +77,8 @@ sequenceDiagram
 ```
 
 模块模式：对每个视频重复 ASR（可并行化，M2 优化），再增加一次 **module 级 LLM 调用**（`structure_module` + 跨视频建议）。单视频专业预审见 ADR-0004。
+
+**旁路**：`lesson-review batch-conduct <目录>` 只做到纠错 + 言行扫描（脏话 / 贬低前任讲师），写出 `output/conduct_*/summary.md`；不进入 Pass A / 结构 / 教练。见 [004 言行扫描](../90-guides/004_batch-conduct_言行扫描速查.md)。
 
 ---
 
@@ -123,3 +126,4 @@ lesson-review-ai/
 | v0.2 | 2026-07-25 | 数据流改为 Pass A / Pass B；组件表同步 |
 | v0.3 | 2026-07-25 | 数据流标注含 clarity（报告契约 v0.3）  |
 | v0.4 | 2026-07-25 | 默认授课媒介改为共屏；关联 ADR-0005    |
+| v0.5 | 2026-07-29 | 旁路 `batch-conduct` 言行扫描          |

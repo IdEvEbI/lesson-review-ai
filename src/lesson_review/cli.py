@@ -14,6 +14,7 @@ from lesson_review.asr import (
     resolve_whisper_model,
     transcribe_audio,
 )
+from lesson_review.batch import run_batch_conduct
 from lesson_review.checks import (
     EXIT_DEPS,
     EXIT_OK,
@@ -154,6 +155,80 @@ def run_cmd(
         typer.echo(f"report: {result.report_path}")
     else:
         typer.echo("report: (skipped; use without --skip-llm for full report)")
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("batch-conduct")
+def batch_conduct_cmd(
+    directory: Path = typer.Argument(
+        ...,
+        exists=False,
+        help="Directory of videos/audio; processed in numeric filename order",
+    ),
+    output_dir: Path = typer.Option(
+        Path("output"),
+        "--output-dir",
+        help="Output root (writes output/conduct_YYYYMMDD-HHMMSS/)",
+    ),
+    language: Optional[str] = typer.Option(
+        None,
+        "--language",
+        help="ASR language hint (default: WHISPER_LANGUAGE or zh)",
+    ),
+    whisper_model: Optional[str] = typer.Option(
+        None,
+        "--whisper-model",
+        help="mlx-whisper model id",
+    ),
+    llm_model: Optional[str] = typer.Option(
+        None,
+        "--llm-model",
+        help="LLM model id (default from env LLM_MODEL)",
+    ),
+    limit: Optional[int] = typer.Option(
+        None,
+        "--limit",
+        help="Only process the first N files (after sort); for smoke tests",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        help="Overwrite existing batch output directory if present",
+    ),
+) -> None:
+    """Batch: extract → ASR → correct → scan for swearing / belittling prior teachers."""
+    if not directory.is_dir():
+        typer.echo(f"batch-conduct failed: not a directory: {directory}", err=True)
+        raise typer.Exit(code=EXIT_USER)
+
+    dep_checks = run_dependency_checks()
+    _print_checks(dep_checks)
+    required_failed = [c for c in dep_checks if c.required and not c.ok]
+    if required_failed:
+        raise typer.Exit(code=EXIT_DEPS)
+
+    try:
+        result = run_batch_conduct(
+            directory,
+            output_dir=output_dir,
+            language=language,
+            whisper_model=whisper_model,
+            llm_model=llm_model,
+            limit=limit,
+            force=force,
+        )
+    except PipelineError as exc:
+        typer.echo(f"batch-conduct failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+
+    typer.echo(f"batch_id: {result.batch_id}")
+    typer.echo(f"batch_dir: {result.batch_dir}")
+    typer.echo(f"summary: {result.summary_path}")
+    typer.echo(f"manifest: {result.manifest_path}")
+    ok = sum(1 for item in result.items if item.status == "ok")
+    err = sum(1 for item in result.items if item.status == "error")
+    hits = sum(1 for item in result.items if item.finding_count > 0)
+    typer.echo(f"items: {len(result.items)} ok={ok} error={err} with_findings={hits}")
     raise typer.Exit(code=EXIT_OK)
 
 

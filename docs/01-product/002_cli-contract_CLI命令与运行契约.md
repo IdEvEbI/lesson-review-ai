@@ -1,6 +1,6 @@
 # CLI 命令与运行契约
 
-- **版本**：v1.1.2
+- **版本**：v1.2
 - **日期**：2026-07-25
 - **状态**：目标契约（实现按本文落地；偏差须更新本文）
 
@@ -57,27 +57,29 @@ lesson-review run --module <路径1> <路径2> ... [选项]
 lesson-review extract-audio <视频> [-o <音频>] [--format mp3|wav] [--output-dir ./output]
 lesson-review transcribe <音频> [-o <transcript.json>] [--language zh] [--whisper-model <id>] [--output-dir ./output]
 lesson-review correct <transcript> [-o <corrected.md>] [--llm-model <id>] [--output-dir ./output]
+lesson-review batch-conduct <目录> [--limit N] [--output-dir ./output]
 lesson-review analyze <corrected> --mode single|module ...
 ```
 
-| 子命令 / 选项     | 说明                                                                |
-| ----------------- | ------------------------------------------------------------------- |
-| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                     |
-| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM   |
-| `-o` / `--output` | 显式输出路径；省略时按子命令默认布局                                |
-| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                           |
-| `transcribe`      | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）   |
-| `--language`      | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                |
-| `--whisper-model` | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo` |
-| `correct`         | LLM 纠错（补标点、降噪）；写出 `transcript_corrected.md`            |
-| `--llm-model`     | 默认读 `LLM_MODEL`，否则 `deepseek-v4-flash`                        |
+| 子命令 / 选项     | 说明                                                                                                                        |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                                                                             |
+| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM                                                           |
+| `-o` / `--output` | 显式输出路径；省略时按子命令默认布局                                                                                        |
+| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                                                                                   |
+| `transcribe`      | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）                                                           |
+| `--language`      | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                                                                        |
+| `--whisper-model` | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo`                                                         |
+| `correct`         | LLM 纠错（补标点、降噪）；写出 `transcript_corrected.md`                                                                    |
+| `batch-conduct`   | 目录批处理：按文件名前缀数字排序 → 抽轨 → 转写 → 纠错 → 言行扫描（脏话 / 贬低前任讲师）；写出 `output/conduct_*/summary.md` |
+| `--llm-model`     | 默认读 `LLM_MODEL`，否则 `deepseek-v4-flash`                                                                                |
 
 子命令与 `run` 共用同一套配置与退出码约定；`extract-audio` / `transcribe` 不要求 `LLM_API_KEY`。`correct` **要求** `LLM_API_KEY`。`transcribe` 需要可导入的 `mlx-whisper` 与 PATH 上的 `ffmpeg`。
 
 `transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。  
 `correct` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_corrected.md`（若输入为 `…/<stem>/transcript_raw.json`，则 stem 取父目录名）。
 
-五类提示词位于仓库根目录 `prompts/`；`run` 全量路径使用 `system_tone` + `asr_correct` / `structure_single` / `coach_feedback`。`structure_module` 留给模块模式（E5）。
+五类提示词位于仓库根目录 `prompts/`；`run` 全量路径使用 `system_tone` + `asr_correct` / `structure_single` / `coach_feedback`。`structure_module` 留给模块模式（E5）。`batch-conduct` 另用 `conduct_scan`（言行扫描）。
 
 ---
 
@@ -160,3 +162,4 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v1.1   | 2026-07-25 | 对齐报告契约 v0.7：lab L1/L2/L3、安装类默认 lab；关联 ADR-0006   |
 | v1.1.1 | 2026-07-25 | 对齐报告契约 v0.7.1：L2/L3 课型无关措辞；确认前仍不改实现        |
 | v1.1.2 | 2026-07-25 | `--lesson-type` 非法值报错；对齐报告契约 v0.7.2 推荐讲解路径     |
+| v1.2   | 2026-07-29 | 新增 `batch-conduct`：目录排序转写/纠错 + 脏话与贬低前任扫描     |

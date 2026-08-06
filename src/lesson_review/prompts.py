@@ -16,6 +16,7 @@ PROMPT_FILES = {
     "structure_module": "structure_module.md",
     "teaching_outline": "teaching_outline.md",
     "coach_feedback": "coach_feedback.md",
+    "conduct_scan": "conduct_scan.md",
 }
 
 

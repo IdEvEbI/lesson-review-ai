@@ -41,5 +41,5 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 1. `01-product/001` PRD：确认 MVP 做什么、不做什么。
 2. `02-architecture/003` 上游标准引用：确认评价尺子从哪里来。
 3. 若准备开始实现或改代码：阅读 `03-delivery/001` Issue 地图。
-4. 若不熟悉 uv、ffmpeg 或本地 CLI：先阅读 `90-guides/`。
+4. 若不熟悉 uv、ffmpeg 或本地 CLI：先阅读 `90-guides/`（单视频端到端见 `005`）。
 5. 协作硬约束：阅读 `.cursor/rules/lesson-review-ai.mdc`。

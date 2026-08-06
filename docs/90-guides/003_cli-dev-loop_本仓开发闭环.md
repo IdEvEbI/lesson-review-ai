@@ -125,7 +125,7 @@ uv run lesson-review run /tmp/no-such.wav --dry-run
 
 1. 按本文完成一次完整 dry-run，并能解释各行输出。
 2. 阅读 [DevOps 工作流](../03-delivery/002_devops-workflow_分支PR与门禁.md)。
-3. 在 ASR / LLM 相关功能就绪后，再阅读 README 中计划文档「005 环境变量与 API Key」与「006 mlx-whisper 说明」。
+3. 在 ASR / LLM 相关功能就绪后，可再阅读 README 中计划文档「006 环境变量与 API Key」与「007 mlx-whisper 说明」；单视频端到端复现见 [005 单视频课评跑通](./005_single-video-run_单视频课评跑通说明.md)。
 
 当前阶段不必优先学习：完整 pytest 体系、容器化部署（可留待工程化里程碑）。
 

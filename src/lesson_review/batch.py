@@ -96,7 +96,8 @@ def _render_summary(batch_id: str, items: list[BatchItemResult], scans: list[dic
     lines = [
         f"# 言行扫描汇总 · `{batch_id}`",
         "",
-        "用途：转写 → 纠错 → 脏话 / 贬低前任讲师核查。对事不对人；以下为摘句证据汇总。",
+        "用途：转写 → 纠错 → 高风险话术核查（粗俗辱骂 / 诋毁学科或课程 / 贬低前任讲师）。",
+        "对事不对人；以下为摘句证据与建议处置路径汇总（对齐上游 A07 / 薄标准 §5）。",
         "",
         "## 总览",
         "",
@@ -131,8 +132,8 @@ def _render_summary(batch_id: str, items: list[BatchItemResult], scans: list[dic
             lines.append("")
             continue
         lines.append("")
-        lines.append("| 类别 | 判断 | 摘句 | 置信 |")
-        lines.append("| ---- | ---- | ---- | ---- |")
+        lines.append("| 类别 | 判断 | 摘句 | 置信 | 建议处置 |")
+        lines.append("| ---- | ---- | ---- | ---- | -------- |")
         for finding in findings:
             if not isinstance(finding, dict):
                 continue
@@ -141,7 +142,8 @@ def _render_summary(batch_id: str, items: list[BatchItemResult], scans: list[dic
             evidence = finding.get("evidence") if isinstance(finding.get("evidence"), dict) else {}
             quote = str(evidence.get("quote") or "").replace("|", "\\|").replace("\n", " ")
             conf = str(finding.get("confidence") or "")
-            lines.append(f"| `{cat}` | {claim} | {quote} | {conf} |")
+            disposition = str(finding.get("disposition_path") or "").replace("|", "\\|")
+            lines.append(f"| `{cat}` | {claim} | {quote} | {conf} | `{disposition}` |")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 

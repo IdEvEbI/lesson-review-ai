@@ -1,4 +1,4 @@
-"""Classroom conduct scan: profanity and belittling prior teachers."""
+"""Classroom conduct scan: high-risk speech aligned with A07 / thin standard §5."""
 
 from __future__ import annotations
 
@@ -17,9 +17,14 @@ _PROFANITY_HINT = re.compile(
     r"(卧槽|我操|我草|他妈|特么|妈的|他妈的|傻逼|傻B|牛逼|牛B|尼玛|你妈的|艹|靠逼)",
     re.IGNORECASE,
 )
-_BELITTLE_HINT = re.compile(
+_BELITTLE_TEACHER_HINT = re.compile(
     r"(上一个老师|上一任|之前的老师|原来的老师|前任老师|那个老师.*(不行|垃圾|差|坑)|"
     r"老师.*(讲得不好|讲的不好|不行|太差))",
+)
+_BELITTLE_SUBJECT_HINT = re.compile(
+    r"(这门课.*(没用|没意思|垃圾|坑)|这个课.*(没用|没意思)|"
+    r"学这个.*(没前途|没用|浪费)|这学科.*(没用|垃圾|坑)|"
+    r"这课程.*(没用|垃圾)|贬低.*(学科|课程)|黑.*(这门课|这课程))",
 )
 
 
@@ -32,10 +37,17 @@ class ConductError(Exception):
 
 
 def heuristic_hints(text: str) -> dict[str, list[str]]:
-    """Return short substrings that match common swear / belittle patterns."""
+    """Return short substrings that match common high-risk speech patterns."""
     profanity = sorted({m.group(0) for m in _PROFANITY_HINT.finditer(text)})
-    belittle = sorted({m.group(0) for m in _BELITTLE_HINT.finditer(text)})
-    return {"profanity_hints": profanity, "belittle_hints": belittle}
+    belittle_teacher = sorted({m.group(0) for m in _BELITTLE_TEACHER_HINT.finditer(text)})
+    belittle_subject = sorted({m.group(0) for m in _BELITTLE_SUBJECT_HINT.finditer(text)})
+    return {
+        "profanity_hints": profanity,
+        "belittle_prior_teacher_hints": belittle_teacher,
+        "belittle_subject_or_course_hints": belittle_subject,
+        # Backward-compatible alias used by older tests / callers.
+        "belittle_hints": belittle_teacher,
+    }
 
 
 def _parse_json_object(content: str) -> dict[str, Any]:
@@ -69,7 +81,7 @@ def analyze_conduct(
     title_anchor: str,
     model: str | None = None,
 ) -> dict[str, Any]:
-    """Scan corrected transcript for profanity / belittling prior teachers."""
+    """Scan corrected transcript for KR4.2 high-risk speech categories."""
     if not corrected_path.is_file():
         raise ConductError(f"corrected transcript missing: {corrected_path}", EXIT_USER)
     text = strip_correction_preamble(corrected_path.read_text(encoding="utf-8"))
@@ -80,8 +92,8 @@ def analyze_conduct(
     user = "\n".join(
         [
             f"title_anchor: {title_anchor}",
-            "请按提示词输出言行扫描 JSON（脏话 / 贬低前任讲师）。",
-            "必须有摘句；无则 findings 为空。",
+            "请按提示词输出言行扫描 JSON（粗俗辱骂 / 诋毁学科或课程 / 贬低前任讲师）。",
+            "每条 finding 须有摘句与 disposition_path；无则 findings 为空。",
             "",
             "## 正则预检提示（仅供参考，不代替摘句判定）",
             json.dumps(hints, ensure_ascii=False),
@@ -100,7 +112,7 @@ def analyze_conduct(
     except LLMError as exc:
         raise ConductError(str(exc), exc.exit_code) from exc
 
-    payload.setdefault("schema_version", 1)
+    payload.setdefault("schema_version", 2)
     payload.setdefault("title_anchor", title_anchor)
     payload["heuristic_hints"] = hints
 

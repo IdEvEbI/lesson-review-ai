@@ -1,7 +1,7 @@
 # Architecture Decision Records（ADR）
 
-- **用途**：记录**显著架构决策**的背景、选项与后果（AWS / Microsoft 等实践中的 ADR 模式）。
-- **规则**：不删除旧 ADR；变更时新建并标记 **Supersedes**。
+- **用途**：本目录记录显著架构决策的背景、备选方案与后果（对齐 AWS / Microsoft 等实践中的 ADR 模式）。
+- **规则**：不删除既有 ADR；若决策变更，应新建条目并标记 **Supersedes** 指向被取代者。
 - **模板**：采用精简 Nygard 格式（Status / Context / Decision / Consequences）。
 
 | ID                                               | 标题                         | 状态     |

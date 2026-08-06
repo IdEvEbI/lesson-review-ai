@@ -56,4 +56,4 @@
 - CLI 契约：`docs/01-product/002_cli-contract_CLI命令与运行契约.md`
 - 补充决策：`docs/02-architecture/adr/0005_clarity-and-playback-boundary.md`
 - 上游：`002_教学能力模型_授课力维度体系_双场景.md`（V1）
-- 实现状态：本 ADR 为 Accepted；v0.3 增量以 ADR-0005 + 报告契约为准，确认前先文档后代码
+- 实现状态：本 ADR 为 Accepted；v0.3 增量以 ADR-0005 + 报告契约为准，在维护者确认前应先更新文档，再修改代码

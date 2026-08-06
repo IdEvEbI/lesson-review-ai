@@ -5,15 +5,15 @@
 
 ## Context
 
-课例含未公开授课内容与学员声音，优先降低外发面。维护者设备为 Apple M5、24GB 内存，适合 MLX 加速。通用 `openai-whisper` 在 macOS 上默认 CPU 极慢；`faster-whisper` 对 Apple GPU 支持弱。千问 / DeepSeek 提供的是 LLM，不是本流水线首选 ASR。
+课例含未公开授课内容与学员声音，应优先降低数据外发的风险面。维护者设备为 Apple M5、24GB 内存，适合 MLX 加速。通用 `openai-whisper` 在 macOS 上默认 CPU 极慢；`faster-whisper` 对 Apple GPU 支持弱。千问 / DeepSeek 提供的是 LLM，不是本流水线首选 ASR。
 
 ## Options considered
 
-| 选项                               | 优点                     | 缺点                                |
-| ---------------------------------- | ------------------------ | ----------------------------------- |
-| mlx-whisper（默认 large-v3-turbo） | 本地、快、隐私、无按量费 | 绑定 Apple Silicon 为主；需下载权重 |
-| 云端 ASR API                       | 免本地算力、跨平台       | 费用、合规、长音频上传              |
-| whisper.cpp                        | C++ 性能好               | 与 Python 编排割裂；MVP 不必双栈    |
+| 选项                               | 优点                     | 缺点                                                                 |
+| ---------------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| mlx-whisper（默认 large-v3-turbo） | 本地、快、隐私、无按量费 | 绑定 Apple Silicon 为主；需下载权重                                  |
+| 云端 ASR API                       | 免本地算力、跨平台       | 费用、合规、长音频上传                                               |
+| whisper.cpp                        | C++ 性能好               | 与 Python 编排割裂；MVP 阶段无需同时维护 C++ 与 Python 两套 ASR 实现 |
 
 ## Decision
 

@@ -13,7 +13,7 @@
 1. [001 uv](./001_uv-cheatsheet_uv速查与决策.md)
 2. [002 ffmpeg](./002_ffmpeg-basics_抽轨速查.md)
 3. [003 本仓开发闭环](./003_cli-dev-loop_本仓开发闭环.md)
-4. [004 言行扫描](./004_batch-conduct_言行扫描速查.md)（投诉核查旁路，按需）
+4. [004 言行扫描](./004_batch-conduct_言行扫描速查.md)（用于投诉核查旁路，按需阅读）
 
 环境门禁摘要：[开发环境与 uv](../03-delivery/003_dev-environment_开发环境与uv.md)。
 

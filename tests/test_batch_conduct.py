@@ -131,10 +131,11 @@ def test_render_summary_includes_duration_and_pedagogy() -> None:
     assert "`private_align`" in md
     assert "#### 讲解结构" in md
     assert "- 主线：从提问到收尾" in md
-    assert "1. `0:00` **开场** — 提问作用" in md
+    assert "1. **开场** — 提问作用" in md
     assert "2. **收尾** — 面试题" in md
     assert "\n- 1. `" not in md
     assert "\n- 2." not in md
+    assert "`0:00`" not in md  # timestamps omitted from summary render
 
 
 def test_render_outline_markdown_uses_ordered_list() -> None:
@@ -151,6 +152,7 @@ def test_render_outline_markdown_uses_ordered_list() -> None:
         }
     )
     assert "- **主线**：一条主线" in md
-    assert "1. `0:00` **A** — 一" in md
+    assert "1. **A** — 一" in md
     assert "2. **B** — 二" in md
     assert "- 1." not in md
+    assert "`0:00`" not in md

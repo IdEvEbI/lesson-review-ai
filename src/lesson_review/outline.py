@@ -144,13 +144,10 @@ def render_outline_markdown(payload: dict[str, Any]) -> str:
         if not isinstance(node, dict):
             continue
         title = str(node.get("title") or "").strip() or f"节点 {index}"
-        start = node.get("start_s")
         one = str(node.get("one_liner") or "").strip()
         # Ordered list only — never prefix with "- ".
-        if isinstance(start, (int, float)):
-            head = f"{index}. `{format_duration(float(start))}` **{title}**"
-        else:
-            head = f"{index}. **{title}**"
+        # Omit start_s in rendered markdown (timestamps from the model are often wrong).
+        head = f"{index}. **{title}**"
         lines.append(head + (f" — {one}" if one else ""))
     lines.append("")
     return "\n".join(lines)

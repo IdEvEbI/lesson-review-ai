@@ -17,6 +17,8 @@ PROMPT_FILES = {
     "teaching_outline": "teaching_outline.md",
     "coach_feedback": "coach_feedback.md",
     "conduct_scan": "conduct_scan.md",
+    "pedagogy_type": "pedagogy_type.md",
+    "batch_outline": "batch_outline.md",
 }
 
 

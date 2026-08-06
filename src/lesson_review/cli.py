@@ -190,6 +190,11 @@ def batch_conduct_cmd(
         "--limit",
         help="Only process the first N files (after sort); for smoke tests",
     ),
+    with_outline: bool = typer.Option(
+        False,
+        "--with-outline",
+        help="Also write per-item lecture outline into summary (extra LLM cost)",
+    ),
     force: bool = typer.Option(
         False,
         "--force",
@@ -216,6 +221,7 @@ def batch_conduct_cmd(
             llm_model=llm_model,
             limit=limit,
             force=force,
+            with_outline=with_outline,
         )
     except PipelineError as exc:
         typer.echo(f"batch-conduct failed: {exc}", err=True)
@@ -228,7 +234,70 @@ def batch_conduct_cmd(
     ok = sum(1 for item in result.items if item.status == "ok")
     err = sum(1 for item in result.items if item.status == "error")
     hits = sum(1 for item in result.items if item.finding_count > 0)
-    typer.echo(f"items: {len(result.items)} ok={ok} error={err} with_findings={hits}")
+    total_s = sum(
+        (item.media_duration_s or 0.0) for item in result.items if item.status == "ok"
+    )
+    typer.echo(
+        f"items: {len(result.items)} ok={ok} error={err} "
+        f"with_findings={hits} duration={total_s:.0f}s"
+    )
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("batch-refresh-summary")
+def batch_refresh_summary_cmd(
+    batch_dir: Path = typer.Argument(
+        ...,
+        help="Existing output/<课例目录> from batch-conduct",
+    ),
+    with_outline: Optional[bool] = typer.Option(
+        None,
+        "--with-outline/--no-outline",
+        help="Include outlines in summary (default: keep manifest flag)",
+    ),
+) -> None:
+    """Re-render summary.md from artifacts; honors pedagogy_type.json overrides."""
+    from lesson_review.batch import refresh_batch_summary
+
+    try:
+        path = refresh_batch_summary(batch_dir, with_outline=with_outline)
+    except PipelineError as exc:
+        typer.echo(f"batch-refresh-summary failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+    typer.echo(f"summary: {path}")
+    raise typer.Exit(code=EXIT_OK)
+
+
+@app.command("batch-enrich")
+def batch_enrich_cmd(
+    batch_dir: Path = typer.Argument(
+        ...,
+        help="Existing output/<课例目录>; backfill duration + pedagogy without re-ASR",
+    ),
+    with_outline: bool = typer.Option(
+        False,
+        "--with-outline",
+        help="Also generate outline.json / outline.md per item",
+    ),
+    llm_model: Optional[str] = typer.Option(
+        None,
+        "--llm-model",
+        help="LLM model id (default from env LLM_MODEL)",
+    ),
+) -> None:
+    """Backfill duration and pedagogy_type on an existing batch (no Whisper)."""
+    from lesson_review.batch import enrich_batch_from_transcripts
+
+    try:
+        path = enrich_batch_from_transcripts(
+            batch_dir,
+            llm_model=llm_model,
+            with_outline=with_outline,
+        )
+    except PipelineError as exc:
+        typer.echo(f"batch-enrich failed: {exc}", err=True)
+        raise typer.Exit(code=exc.exit_code) from exc
+    typer.echo(f"summary: {path}")
     raise typer.Exit(code=EXIT_OK)
 
 

@@ -29,6 +29,12 @@ uv run lesson-review batch-conduct "data/input/<某目录>" --limit 1
 
 # （规划）追加各段讲解结构提纲
 uv run lesson-review batch-conduct "data/input/<某目录>" --with-outline
+
+# 对已有批产出补时长与细课型（不重跑 Whisper）
+uv run lesson-review batch-enrich "output/<课例目录>"
+
+# 人工改 pedagogy_type.json 的 source=override 后重渲
+uv run lesson-review batch-refresh-summary "output/<课例目录>"
 ```
 
 产出根目录：与输入目录**同名**，便于对照查找：

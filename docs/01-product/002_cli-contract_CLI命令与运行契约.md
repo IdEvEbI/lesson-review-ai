@@ -58,23 +58,27 @@ lesson-review extract-audio <视频> [-o <音频>] [--format mp3|wav] [--output-
 lesson-review transcribe <音频> [-o <transcript.json>] [--language zh] [--whisper-model <id>] [--output-dir ./output]
 lesson-review correct <transcript> [-o <corrected.md>] [--llm-model <id>] [--output-dir ./output]
 lesson-review batch-conduct <目录> [--limit N] [--with-outline] [--output-dir ./output] [--force]
+lesson-review batch-enrich <批产出目录> [--with-outline] [--llm-model <id>]
+lesson-review batch-refresh-summary <批产出目录> [--with-outline|--no-outline]
 lesson-review analyze <corrected> --mode single|module ...
 ```
 
-| 子命令 / 选项     | 说明                                                                                               |
-| ----------------- | -------------------------------------------------------------------------------------------------- |
-| `extract-audio`   | 仅抽轨 / 规范化音频；不调用 LLM                                                                    |
-| `--format`        | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM                                  |
-| `-o` / `--output` | 显式输出路径；省略时按子命令默认布局                                                               |
-| `--output-dir`    | 省略 `-o` 时的输出根目录，默认 `./output`                                                          |
-| `transcribe`      | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）                                  |
-| `--language`      | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                                               |
-| `--whisper-model` | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo`                                |
-| `correct`         | LLM 纠错（补标点、降噪）；写出 `transcript_corrected.md`                                           |
-| `batch-conduct`   | 目录批处理：抽轨 → 转写 → 纠错 → 言行扫描；写出 `output/<输入目录名>/summary.md`（见下表增强字段） |
-| `--with-outline`  | （规划）各段追加讲解结构提纲进 `summary`；默认关闭以控制 LLM 成本                                  |
-| `--force`         | 覆盖已存在的同名批产出目录                                                                         |
-| `--llm-model`     | 默认读 `LLM_MODEL`，否则 `deepseek-v4-flash`                                                       |
+| 子命令 / 选项           | 说明                                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `extract-audio`         | 仅抽轨 / 规范化音频；不调用 LLM                                                                    |
+| `--format`              | 默认 `mp3`（16 kHz 单声道约 96 kbps）；`wav` 为 16 kHz 单声道 PCM                                  |
+| `-o` / `--output`       | 显式输出路径；省略时按子命令默认布局                                                               |
+| `--output-dir`          | 省略 `-o` 时的输出根目录，默认 `./output`                                                          |
+| `transcribe`            | 本地 mlx-whisper 转写；写出 `transcript_raw.json`（含片段时间戳）                                  |
+| `--language`            | 默认读 `WHISPER_LANGUAGE`，否则 `zh`                                                               |
+| `--whisper-model`       | 默认读 `WHISPER_MODEL`，否则 `mlx-community/whisper-large-v3-turbo`                                |
+| `correct`               | LLM 纠错（补标点、降噪）；写出 `transcript_corrected.md`                                           |
+| `batch-conduct`         | 目录批处理：抽轨 → 转写 → 纠错 → 言行扫描；写出 `output/<输入目录名>/summary.md`（见下表增强字段） |
+| `--with-outline`        | 各段追加讲解结构提纲进 `summary`；默认关闭以控制 LLM 成本                                          |
+| `--force`               | 覆盖已存在的同名批产出目录                                                                         |
+| `batch-enrich`          | 对已有批产出补时长与细课型（不重跑 Whisper）；可选 `--with-outline`                                |
+| `batch-refresh-summary` | 仅按产物重渲 `summary.md`；尊重 `pedagogy_type.json` 中 `override`                                 |
+| `--llm-model`           | 默认读 `LLM_MODEL`，否则 `deepseek-v4-flash`                                                       |
 
 #### `batch-conduct` 汇总字段（`summary.md` / manifest）
 
@@ -108,7 +112,7 @@ lesson-review analyze <corrected> --mode single|module ...
 `transcribe` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_raw.json`。  
 `correct` 省略 `-o` 时默认写出：`<output-dir>/<stem>/transcript_corrected.md`（若输入为 `…/<stem>/transcript_raw.json`，则 stem 取父目录名）。
 
-五类提示词位于仓库根目录 `prompts/`；`run` 全量路径使用 `system_tone` + `asr_correct` / `structure_single` / `coach_feedback`。`structure_module` 供模块批处理模式使用（对应 E5）。`batch-conduct` 另用 `conduct_scan`（言行扫描）；旁路增强另用细课型 / 可选结构专用提示词（实现随 Issue 落地，不挤占主路径 `lesson_type`）。
+五类提示词位于仓库根目录 `prompts/`；`run` 全量路径使用 `system_tone` + `asr_correct` / `structure_single` / `coach_feedback`。`structure_module` 供模块批处理模式使用（对应 E5）。`batch-conduct` 另用 `conduct_scan`、`pedagogy_type`、可选 `batch_outline`（旁路增强；不挤占主路径 `lesson_type`）。
 
 ---
 

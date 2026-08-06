@@ -89,7 +89,7 @@ lesson-review analyze <corrected> --mode single|module ...
 | `pedagogy_type`        | 旁路细课型：上游备课 `004`～`010` 之一，或 `other`（待维护者校准）；**不等于**主路径 `lesson_type`（`principle`/`code`/`lab`） |
 | `pedagogy_type_source` | `llm` \| `override` \| `other`                                                                                                 |
 | 日分布                 | 按**时长加权**统计各 `pedagogy_type` 占比（投诉日「开场/吹牛 vs 代码」用）                                                     |
-| 讲解结构（可选）       | `--with-outline` 时：每段 5～12 个节点摘要；宜带时间锚；**不**跑 Pass A / coach                                                |
+| 讲解结构（可选）       | `--with-outline` 时：主线/散点为无序列表，节点为有序列表（勿 `- 1.` 混排）；**不展示**不可靠时间戳；**不**跑 Pass A / coach    |
 | 言行扫描               | 既有三类 + 处置路径；与时长 / 课型独立                                                                                         |
 
 细课型枚举（旁路；文案对齐上游备课方法专文，公开文档不写品牌）：
@@ -199,3 +199,4 @@ manifest 用于可复现与提示词回归，**不含** API Key 与逐字稿全�
 | v1.2.1 | 2026-08-06 | 可读性润色；报告契约版本指针改为 v0.7.5 草案                     |
 | v1.2.2 | 2026-08-06 | `batch-conduct` 产出目录改为与输入目录同名                       |
 | v1.3   | 2026-08-06 | `batch-conduct`：时长、细课型占比、可选结构提纲（旁路增强）      |
+| v1.3.1 | 2026-08-06 | summary 讲解结构：节点改为有序列表，禁止 `- 1.` 混排             |

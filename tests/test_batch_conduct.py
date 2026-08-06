@@ -94,6 +94,13 @@ def test_render_summary_includes_duration_and_pedagogy() -> None:
             pedagogy_type="004",
             pedagogy_type_source="llm",
             finding_count=1,
+            outline={
+                "mainline": "从提问到收尾",
+                "nodes": [
+                    {"title": "开场", "one_liner": "提问作用", "start_s": 0},
+                    {"title": "收尾", "one_liner": "面试题"},
+                ],
+            },
         )
     ]
     scans = [
@@ -110,10 +117,42 @@ def test_render_summary_includes_duration_and_pedagogy() -> None:
             ],
         }
     ]
-    md = _render_summary("demo-batch", items, scans)
+    md = _render_summary(
+        "demo-batch",
+        items,
+        scans,
+        with_outline=True,
+    )
     assert "成功段合计时长" in md
     assert "2:05" in md  # 125s
     assert "`004`" in md
     assert "细课型日分布" in md
     assert "建议处置" in md
     assert "`private_align`" in md
+    assert "#### 讲解结构" in md
+    assert "- 主线：从提问到收尾" in md
+    assert "1. **开场** — 提问作用" in md
+    assert "2. **收尾** — 面试题" in md
+    assert "\n- 1. `" not in md
+    assert "\n- 2." not in md
+    assert "`0:00`" not in md  # timestamps omitted from summary render
+
+
+def test_render_outline_markdown_uses_ordered_list() -> None:
+    from lesson_review.outline import render_outline_markdown
+
+    md = render_outline_markdown(
+        {
+            "title_anchor": "demo",
+            "mainline": "一条主线",
+            "nodes": [
+                {"title": "A", "one_liner": "一", "start_s": 0},
+                {"title": "B", "one_liner": "二"},
+            ],
+        }
+    )
+    assert "- **主线**：一条主线" in md
+    assert "1. **A** — 一" in md
+    assert "2. **B** — 二" in md
+    assert "- 1." not in md
+    assert "`0:00`" not in md

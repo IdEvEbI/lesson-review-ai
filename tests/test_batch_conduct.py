@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from lesson_review.batch import _render_summary, list_media_sorted, sort_key_media
+from lesson_review.batch import (
+    _render_summary,
+    batch_id_from_input_dir,
+    list_media_sorted,
+    sort_key_media,
+)
 from lesson_review.batch import BatchItemResult
 from lesson_review.conduct import heuristic_hints
 
@@ -20,6 +25,21 @@ def test_list_media_sorted(tmp_path: Path) -> None:
     (tmp_path / "readme.txt").write_text("no", encoding="utf-8")
     names = [p.name for p in list_media_sorted(tmp_path)]
     assert names == ["02-a.mp4", "10-b.mp4"]
+
+
+def test_batch_id_from_input_dir_uses_folder_name() -> None:
+    assert (
+        batch_id_from_input_dir(Path("data/input/day01-project-rf-2026-07-23"))
+        == "day01-project-rf-2026-07-23"
+    )
+    assert batch_id_from_input_dir(Path("data/input/课例目录-day01")) == "课例目录-day01"
+
+
+def test_batch_id_from_input_dir_fallback_for_dot() -> None:
+    # Path(".").name is "."; must not collide with a useless output folder.
+    batch_id = batch_id_from_input_dir(Path("."))
+    assert batch_id.startswith("conduct_")
+    assert len(batch_id) > len("conduct_")
 
 
 def test_heuristic_hints_profanity_belittle_teacher_and_subject() -> None:

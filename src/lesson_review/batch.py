@@ -84,6 +84,20 @@ def _safe_dir_name(stem: str) -> str:
     return cleaned[:120] or "item"
 
 
+def batch_id_from_input_dir(input_dir: Path) -> str:
+    """Derive a stable batch folder name from the input directory basename.
+
+    Prefer the human folder name (e.g. a day-of-class label) so outputs are
+    easy to find next to ``data/input/<同名>/``. Falls back when the name is
+    empty or a filesystem sentinel like ``.``.
+    """
+    name = _safe_dir_name(input_dir.name.strip() or "")
+    if name in {"", ".", "..", "item"}:
+        stamp = datetime.now().astimezone().strftime("%Y%m%d-%H%M%S")
+        return f"conduct_{stamp}"
+    return name
+
+
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -172,7 +186,7 @@ def run_batch_conduct(
         media = media[:limit]
 
     started = _utc_now()
-    batch_id = started.astimezone().strftime("conduct_%Y%m%d-%H%M%S")
+    batch_id = batch_id_from_input_dir(input_dir)
     batch_dir = output_dir / batch_id
     if batch_dir.exists():
         if not force:

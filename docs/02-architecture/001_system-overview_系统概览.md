@@ -78,7 +78,7 @@ sequenceDiagram
 
 模块模式：对每个视频重复 ASR（各视频的 ASR 步骤可并行执行；并行化留待 M2 优化），再增加一次 **module 级 LLM 调用**（`structure_module` + 跨视频建议）。单视频专业预审见 ADR-0004。
 
-**旁路**：`lesson-review batch-conduct <目录>` 仅执行至纠错与言行扫描（脏话 / 贬低前任讲师），写出 `output/conduct_*/summary.md`；不进入后续 Pass A / 结构 / 教练步骤。见 [004 言行扫描](../90-guides/004_batch-conduct_言行扫描速查.md)。
+**旁路**：`lesson-review batch-conduct <目录>` 仅执行至纠错与言行扫描（并可汇总时长 / 细课型分布；可选结构提纲），写出 `output/<输入目录名>/summary.md`；不进入 Pass A / 教练步骤。见 [004 言行扫描](../90-guides/004_batch-conduct_言行扫描速查.md)。
 
 ---
 

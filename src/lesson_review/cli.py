@@ -168,7 +168,7 @@ def batch_conduct_cmd(
     output_dir: Path = typer.Option(
         Path("output"),
         "--output-dir",
-        help="Output root (writes output/conduct_YYYYMMDD-HHMMSS/)",
+        help="Output root (writes output/<input-dir-name>/)",
     ),
     language: Optional[str] = typer.Option(
         None,

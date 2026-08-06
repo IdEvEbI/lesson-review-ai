@@ -145,3 +145,42 @@ def extract_audio(
         )
 
     return dest.resolve()
+
+
+def probe_duration_seconds(media_path: Path) -> float | None:
+    """Return media duration in seconds via ffprobe, or None if unavailable."""
+    if not media_path.is_file():
+        return None
+    if shutil.which("ffprobe") is None:
+        return None
+    cmd = [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "default=noprint_wrappers=1:nokey=1",
+        str(media_path),
+    ]
+    try:
+        completed = subprocess.run(
+            cmd,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError:
+        return None
+    if completed.returncode != 0:
+        return None
+    raw = (completed.stdout or "").strip()
+    if not raw:
+        return None
+    try:
+        value = float(raw)
+    except ValueError:
+        return None
+    if value <= 0 or value != value:  # NaN
+        return None
+    return value

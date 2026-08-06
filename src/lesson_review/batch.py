@@ -315,12 +315,12 @@ def _render_summary(
                     title = str(node.get("title") or "").strip() or f"节点 {index}"
                     one = str(node.get("one_liner") or "").strip()
                     start = node.get("start_s")
-                    prefix = f"{index}."
+                    # Ordered list only — never "- 1." (mixed ul/ol breaks Markdown).
                     if isinstance(start, (int, float)):
-                        prefix = f"{index}. `{format_duration(float(start))}`"
-                    lines.append(
-                        f"- {prefix} **{title}**" + (f" — {one}" if one else "")
-                    )
+                        head = f"{index}. `{format_duration(float(start))}` **{title}**"
+                    else:
+                        head = f"{index}. **{title}**"
+                    lines.append(head + (f" — {one}" if one else ""))
             elif not mainline and not scatter:
                 lines.append("- （无结构节点）")
         lines.append("")

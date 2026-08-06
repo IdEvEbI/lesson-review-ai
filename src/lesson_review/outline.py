@@ -145,11 +145,13 @@ def render_outline_markdown(payload: dict[str, Any]) -> str:
             continue
         title = str(node.get("title") or "").strip() or f"节点 {index}"
         start = node.get("start_s")
-        prefix = f"{index}. "
-        if isinstance(start, (int, float)):
-            prefix = f"{index}. [`{format_duration(float(start))}`] "
         one = str(node.get("one_liner") or "").strip()
-        lines.append(f"{prefix}**{title}**" + (f" — {one}" if one else ""))
+        # Ordered list only — never prefix with "- ".
+        if isinstance(start, (int, float)):
+            head = f"{index}. `{format_duration(float(start))}` **{title}**"
+        else:
+            head = f"{index}. **{title}**"
+        lines.append(head + (f" — {one}" if one else ""))
     lines.append("")
     return "\n".join(lines)
 

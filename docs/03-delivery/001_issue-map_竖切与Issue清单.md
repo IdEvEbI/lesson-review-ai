@@ -72,13 +72,13 @@
 > 赋能顺序：维护者验收 → **带教优先内测**（先提升自身，再带新人）→ 暂不开放全体自查。  
 > 详细草案：[`drafts/004`](./drafts/004_issue-draft_single-video-coach-course-design.md)。Epic：[GitHub #37](https://github.com/IdEvEbI/lesson-review-ai/issues/37)。原 E7-2 多交付点政策**并入 E4c-2**。
 
-| ID    | 标题（建议）                                                     | 验收要点                                                            |
-| ----- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| E4c-1 | `docs: M1b 范围、纠错稿闸门与带教赋能顺序`                       | **文档已落地**（PRD §2.1；指南 `005` §4）；待 GitHub Issue 归档     |
-| E4c-2 | `docs+prompts: 主线 / 主交付 / 反硬套总分总`（含原多交付点政策） | 合格线盯 1～2 主交付；硬套总分总能给合并/重排改法；不刷次要嵌套     |
-| E4c-3 | `prompts: 粘贴与跟敲线索（转写可证）+ 待回放`                    | 有摘句才写粘贴偏多；不写成「完全不会」；画面级进待回放              |
-| E4c-4 | `prompts: 课型差异化教练（principle / lab 优先）`                | 原理收窄合格线；lab 守 L1～L3；禁止一律 why→what→how                |
-| E4c-5 | `test+docs: 金样例回归与带教可读性验收`                          | 2～4 脱敏单段回归；确认报告能辅助**改课程设计**；修正记录模板可复用 |
+| ID    | 标题（建议）                                                     | 验收要点 / Issue                                                             |
+| ----- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| E4c-1 | `docs: M1b 范围、纠错稿闸门与带教赋能顺序`                       | **文档已落地**；[#38](https://github.com/IdEvEbI/lesson-review-ai/issues/38) |
+| E4c-2 | `docs+prompts: 主线 / 主交付 / 反硬套总分总`（含原多交付点政策） | [#39](https://github.com/IdEvEbI/lesson-review-ai/issues/39)                 |
+| E4c-3 | `prompts: 粘贴与跟敲线索（转写可证）+ 待回放`                    | [#40](https://github.com/IdEvEbI/lesson-review-ai/issues/40)                 |
+| E4c-4 | `prompts: 课型差异化教练（principle / lab 优先）`                | [#41](https://github.com/IdEvEbI/lesson-review-ai/issues/41)                 |
+| E4c-5 | `test+docs: 金样例回归与带教可读性验收`                          | [#42](https://github.com/IdEvEbI/lesson-review-ai/issues/42)                 |
 
 **E4c 不做**：目录级 A01 日课全自动报告、E5 模块双层、声学旁路、自查门户。
 

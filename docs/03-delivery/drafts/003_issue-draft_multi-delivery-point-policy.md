@@ -2,8 +2,8 @@
 
 - **建议标题**：`docs+product: multi-delivery-point policy for long single videos`
 - **类型**：`docs`（契约 / PRD / 指南）+ prompts；CLI 锚点为可选后续
-- **优先级**：投诉深挖与日常课评共用；建议与打字误伤同批或紧随其后
-- **状态**：本地草案（待维护者授权后创建 GitHub Issue）
+- **优先级**：并入 **E4c-2**（见 [004 单视频教练强化](./004_issue-draft_single-video-coach-course-design.md)）；不再作为独立主线抢排期
+- **状态**：本地草案（随 E4c 开 Issue 时吸收验收项）
 
 ---
 

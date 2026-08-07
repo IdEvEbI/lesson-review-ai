@@ -1,6 +1,6 @@
 # 竖切交付与 Issue 地图
 
-- **版本**：v0.4.1
+- **版本**：v0.4.2
 - **日期**：2026-08-07
 - **原则**：**Tracer bullet**——优先打通一条贯穿各层的竖切，再补模块模式与工程化（与常见 AI 工程工作坊中的竖切拆 Issue 做法一致）。
 
@@ -75,7 +75,7 @@
 | ID    | 标题（建议）                                                     | 验收要点 / Issue                                                             |
 | ----- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | E4c-1 | `docs: M1b 范围、纠错稿闸门与带教赋能顺序`                       | **文档已落地**；[#38](https://github.com/IdEvEbI/lesson-review-ai/issues/38) |
-| E4c-2 | `docs+prompts: 主线 / 主交付 / 反硬套总分总`（含原多交付点政策） | [#39](https://github.com/IdEvEbI/lesson-review-ai/issues/39)                 |
+| E4c-2 | `docs+prompts: 主线 / 主交付 / 反硬套总分总`（含原多交付点政策） | **本批落地**；[#39](https://github.com/IdEvEbI/lesson-review-ai/issues/39)   |
 | E4c-3 | `prompts: 粘贴与跟敲线索（转写可证）+ 待回放`                    | [#40](https://github.com/IdEvEbI/lesson-review-ai/issues/40)                 |
 | E4c-4 | `prompts: 课型差异化教练（principle / lab 优先）`                | [#41](https://github.com/IdEvEbI/lesson-review-ai/issues/41)                 |
 | E4c-5 | `test+docs: 金样例回归与带教可读性验收`                          | [#42](https://github.com/IdEvEbI/lesson-review-ai/issues/42)                 |

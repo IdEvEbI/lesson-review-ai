@@ -36,6 +36,14 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 
 ---
 
+## 5. 知识介绍（概念培训 · 非产品源）
+
+请阅读 [91-knowledge\_知识介绍/README.md](./91-knowledge_知识介绍/README.md)。
+
+该目录说明智能体、Skills、与本仓 `prompts/` 的边界；**不**替代产品契约。操作本仓请仍看 `90-guides`。
+
+---
+
 ## 新会话推荐阅读顺序
 
 1. `01-product/001` PRD：确认 MVP 做什么、不做什么。
@@ -43,4 +51,5 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 3. `02-architecture/003` 上游标准引用：确认评价尺子从哪里来。
 4. 若准备开始实现或改代码：阅读 `03-delivery/001` Issue 地图。
 5. 若不熟悉 uv、ffmpeg 或本地 CLI：先阅读 `90-guides/`（单视频端到端见 `005`）。
-6. 协作硬约束：阅读 `.cursor/rules/lesson-review-ai.mdc`。
+6. 若需分清智能体 / Skills / `prompts/`：阅读 `91-knowledge_知识介绍/001`。
+7. 协作硬约束：阅读 `.cursor/rules/lesson-review-ai.mdc`。

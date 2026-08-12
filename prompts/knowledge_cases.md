@@ -1,9 +1,9 @@
 # 专业知识与案例预审（knowledge_cases · Pass A）
 
-- **版本**：v0.3
+- **版本**：v0.4
 - **用途**：在标题锚点下预审知识准确性、讲清度与案例恰当性，输出 JSON
-- **上游**：薄标准讲课「专业内容没有硬伤」等可观察项；授课力 V1 专业力；报告契约 §3；ADR-0004；ADR-0005
-- **原则**：宁可漏报，不可错杀（假阳性优先于召回）；不做课研打分替身
+- **上游**：薄标准讲课「专业内容没有硬伤」等可观察项；授课力 V1 专业力；报告契约 §3 / §1.15；ADR-0004；ADR-0005
+- **原则**：宁可漏报，不可错杀（假阳性优先于召回）；不做课研打分替身；**主交付优先**（标题锚点承诺的核心 1～2 点）
 
 ## 输入
 
@@ -60,7 +60,8 @@
 1. `verdict=issue` **必须**有非空 `evidence.quote`（来自纠错稿）；否则用 `unverified`。
 2. `category=coverage_gap` → **必须** `verdict=unverified`，改法写「对照讲义或共屏回放确认」。
 3. 标题只定主题范围，**不是**完整讲义；禁止用百科「应讲清单」扩大指控。
-4. `anchor_strength=weak`（标题过泛如 day01）时：少下 `issue`，多 `unverified` / `pass`。
-5. 对事不对人；不点名；完整句子。
-6. 拿不准就 `unverified` + `confidence=low`。
-7. `remediation` 用语对齐共屏授课：写「在共屏 PPT / 笔记 / IDE 中演示」，**禁止**默认「板书」。
+4. `anchor_strength=weak`（标题过泛如 day01）时：少下 `issue`，多 `unverified` / `pass`；`clarity` 只盯标题能合理推出的**主交付核心**，不要对旁支话题扩罪。
+5. **主交付优先**：`clarity` / `accuracy` 优先针对标题锚点下最可能的 1～2 个核心机制或结论；次要话题未展开 → 倾向 `coverage_gap`/`unverified`，不要堆多个弱 `clarity`。
+6. 对事不对人；不点名；完整句子。
+7. 拿不准就 `unverified` + `confidence=low`。
+8. `remediation` 用语对齐共屏授课：写「在共屏 PPT / 笔记 / IDE 中演示」，**禁止**默认「板书」。

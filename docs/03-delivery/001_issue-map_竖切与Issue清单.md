@@ -21,7 +21,7 @@
 \*M1b：两案投诉核查后插入。目标是把单视频教练报告做到「维护者验收通过 → **分校带教优先内测**」；先提升带教自身课程设计与教学能力，再由带教带新老师。详细验收见 [`drafts/004`](./drafts/004_issue-draft_single-video-coach-course-design.md)。  
 \*M4 非原 MVP 竖切必选；服务于投诉旁路与课评公平性；**不**阻塞 M1b。
 
-**当前优先级**：`E4c（M1b）` → 再 E5 / E7-1 → E7-3 声学靠后。
+**当前优先级**：见 [轻量开发笔记](./005_dev-notebook_轻量开发笔记.md) 与 [阶段看板](./004_issue-backlog_阶段看板与待办.md)。本阶段主跟踪为 [#46](https://github.com/IdEvEbI/lesson-review-ai/issues/46)「多日备课重建 · 一天结构 + 讲义」；E4c 课型包 / 粘贴项让路，不关闭。
 
 **开发启动门禁**：维护者提供脱敏样例媒体 + DeepSeek API Key 已写入本地 `.env`。
 

@@ -4,7 +4,7 @@
 - **日期**：2026-08-12
 - **读者**：维护者（自学 / 带协作 AI 对齐用语）
 - **性质**：概念培训；**不**改变 CLI 行为，**不**替代 PRD / 报告契约
-- **相关**：本仓 `prompts/` · Cursor Skills · [愿景增量](../01-product/004_product-vision-increment_本地智能体愿景增量.md) · [阶段看板 §6](../03-delivery/004_issue-backlog_阶段看板与待办.md)
+- **相关**：本仓 `prompts/` · Cursor Skills · [愿景增量](../01-product/004_product-vision-increment_本地智能体愿景增量.md) · [开发笔记](../03-delivery/005_dev-notebook_轻量开发笔记.md)
 
 ---
 
@@ -62,12 +62,12 @@
    交付物（报告、摘要）
 ```
 
-| 阶段          | 形态           | 和本仓的关系                                          |
-| ------------- | -------------- | ----------------------------------------------------- |
-| **A（当前）** | 固定流水线 CLI | `lesson-review run`：步骤写死，最稳，服务「稳定抽检」 |
-| **B**         | 脚本薄封装     | 选文件 → run → 打开报告；老师少记命令                 |
-| **C**         | 对话式 Agent   | 「评这个 principle 视频」→ 模型选工具、可多轮         |
-| **D**         | IDE 型 Agent   | 类似 Cursor：聊天 + 改工程 + Skills；偏研发           |
+| 阶段          | 形态           | 和本仓的关系                                             |
+| ------------- | -------------- | -------------------------------------------------------- |
+| **A（当前）** | 固定流水线 CLI | `lesson-review run`：步骤写死；现服务「一天结构 + 讲义」 |
+| **B**         | 脚本薄封装     | 选文件 → run → 打开报告；老师少记命令                    |
+| **C**         | 对话式 Agent   | 「评这个 principle 视频」→ 模型选工具、可多轮            |
+| **D**         | IDE 型 Agent   | 类似 Cursor：聊天 + 改工程 + Skills；偏研发              |
 
 阶段看板约定：**先把 A 做硬**；B/C/D 后置，避免评课主链分心。
 
@@ -164,7 +164,7 @@ Pass A → system_tone + knowledge_cases
 | ② 研发协作     | 修正记录怎么写、改 prompts 前对哪节契约        | **Cursor Skills / Rules**                           |
 | ③ 老师对话壳   | 「重点看主交付」→ 调 run / 读报告              | **Later**：GUI 或对话 Agent，底层仍调同一套 prompts |
 
-当前阶段（稳定抽检）：优先 ①；② 可按需补 1～2 个研发 Skill；③ 不抢主链。
+当前阶段（一天结构 + 讲义）：优先 ①；② 可按需补 1～2 个研发 Skill；③ 不抢主链。
 
 ---
 
@@ -194,5 +194,6 @@ Pass A → system_tone + knowledge_cases
 
 - [单视频课评跑通](../90-guides/005_single-video-run_单视频课评跑通说明.md)
 - [愿景增量 · 本地智能体](../01-product/004_product-vision-increment_本地智能体愿景增量.md)
-- [阶段看板 · 智能体演进](../03-delivery/004_issue-backlog_阶段看板与待办.md)
+- [轻量开发笔记](../03-delivery/005_dev-notebook_轻量开发笔记.md)
+- [阶段看板](../03-delivery/004_issue-backlog_阶段看板与待办.md)
 - 本仓 `prompts/` 与 `src/lesson_review/prompts.py`

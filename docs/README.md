@@ -8,7 +8,7 @@
 
 请先阅读 [01-product/README.md](./01-product/README.md)。
 
-MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为唯一产品源。阶段方向见 [004 愿景增量](./01-product/004_product-vision-increment_本地智能体愿景增量.md)；本周做什么见 [阶段看板](./03-delivery/004_issue-backlog_阶段看板与待办.md)。
+MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为唯一产品源。阶段方向见 [004 愿景增量](./01-product/004_product-vision-increment_本地智能体愿景增量.md)。**本周做什么**见 [轻量开发笔记](./03-delivery/005_dev-notebook_轻量开发笔记.md)。
 
 ---
 
@@ -24,7 +24,7 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 
 请阅读 [03-delivery/README.md](./03-delivery/README.md)。
 
-该目录包含 Issue 地图、DevOps 约定与 [开发环境与 uv](./03-delivery/003_dev-environment_开发环境与uv.md)。
+该目录包含 Issue 地图、轻量开发笔记、DevOps 约定与 [开发环境与 uv](./03-delivery/003_dev-environment_开发环境与uv.md)。
 
 ---
 
@@ -47,7 +47,7 @@ MVP 范围以 [001 PRD](./01-product/001_prd_课评教练MVP产品说明.md) 为
 ## 新会话推荐阅读顺序
 
 1. `01-product/001` PRD：确认 MVP 做什么、不做什么。
-2. `01-product/004` 愿景增量 + `03-delivery/004` 阶段看板：确认 8～12 周成功标准与 Now。
+2. `03-delivery/005` 轻量开发笔记：本周焦点（文档驱动）。愿景与看板见 `01-product/004`、`03-delivery/004`。
 3. `02-architecture/003` 上游标准引用：确认评价尺子从哪里来。
 4. 若准备开始实现或改代码：阅读 `03-delivery/001` Issue 地图。
 5. 若不熟悉 uv、ffmpeg 或本地 CLI：先阅读 `90-guides/`（单视频端到端见 `005`）。
